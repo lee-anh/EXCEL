@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2021.1.4),
-    on Thu Jun  3 09:16:33 2021
+    on Thu Jun  3 11:00:15 2021
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -83,7 +83,7 @@ defaultKeyboard = keyboard.Keyboard()
 # Initialize components for Routine "instr"
 instrClock = core.Clock()
 instructions = visual.TextStim(win=win, name='instructions',
-    text='Press up arrow when you hear high pitch\nPress down arrow when you hear low pitch\n\nPress any key to continue',
+    text='Press up arrow when you see up arrow image\nPress down arrow when you see down arrow image\n\nPress any key to continue',
     font='Open Sans',
     pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -93,40 +93,57 @@ key_resp = keyboard.Keyboard()
 
 # Initialize components for Routine "visual_2"
 visual_2Clock = core.Clock()
-centerSquare = visual.Rect(
-    win=win, name='centerSquare',
-    width=(0.15, 0.15)[0], height=(0.15, 0.15)[1],
+center_vis = visual.Rect(
+    win=win, name='center_vis',units='pix', 
+    width=(75, 75)[0], height=(75, 75)[1],
     ori=0.0, pos=(0, 0),
     lineWidth=1.0,     colorSpace='rgb',  lineColor='white', fillColor='white',
     opacity=None, depth=0.0, interpolate=True)
-arrowImage = visual.ImageStim(
+arrow_image = visual.ImageStim(
     win=win,
-    name='arrowImage', 
+    name='arrow_image', 
     image='sin', mask=None,
     ori=0.0, pos=(0, 0), size=(0.15, 0.15),
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-1.0)
-key_resp_2 = keyboard.Keyboard()
-feedbackSquare = visual.Rect(
-    win=win, name='feedbackSquare',
-    width=(0.15, 0.15)[0], height=(0.15, 0.15)[1],
+resp_vis = keyboard.Keyboard()
+feedback_vis = visual.Rect(
+    win=win, name='feedback_vis',units='pix', 
+    width=(75, 75)[0], height=(75, 75)[1],
     ori=1.0, pos=(0, 0),
     lineWidth=1.0,     colorSpace='rgb',  lineColor='white', fillColor='white',
     opacity=None, depth=-3.0, interpolate=True)
 
+# Initialize components for Routine "instr_audio"
+instr_audioClock = core.Clock()
+audio_instructions = visual.TextStim(win=win, name='audio_instructions',
+    text='Press up arrow when you hear high pitch\nPress down arrow when you hear low pitch\n\nPress any key to continue',
+    font='Open Sans',
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=0.0);
+key_resp_instructions = keyboard.Keyboard()
+
 # Initialize components for Routine "audio"
 audioClock = core.Clock()
-sound_1 = sound.Sound('A', secs=0.5, stereo=True, hamming=True,
-    name='sound_1')
-sound_1.setVolume(1.0)
-response = keyboard.Keyboard()
-square = visual.Rect(
-    win=win, name='square',
+sound_aud = sound.Sound('A', secs=0.5, stereo=True, hamming=True,
+    name='sound_aud')
+sound_aud.setVolume(1.0)
+resp_aud = keyboard.Keyboard()
+center_aud = visual.Rect(
+    win=win, name='center_aud',
     width=(0.15, 0.15)[0], height=(0.15, 0.15)[1],
     ori=0.0, pos=(0, 0),
     lineWidth=1.0,     colorSpace='rgb',  lineColor='white', fillColor='white',
     opacity=None, depth=-2.0, interpolate=True)
+feedback_aud = visual.Rect(
+    win=win, name='feedback_aud',units='pix', 
+    width=(75, 75)[0], height=(75, 75)[1],
+    ori=0.0, pos=(0, 0),
+    lineWidth=1.0,     colorSpace='rgb',  lineColor='white', fillColor='white',
+    opacity=None, depth=-3.0, interpolate=True)
 
 # Initialize components for Routine "thanks"
 thanksClock = core.Clock()
@@ -226,15 +243,6 @@ for thisComponent in instrComponents:
         thisComponent.setAutoDraw(False)
 thisExp.addData('instructions.started', instructions.tStartRefresh)
 thisExp.addData('instructions.stopped', instructions.tStopRefresh)
-# check responses
-if key_resp.keys in ['', [], None]:  # No response was made
-    key_resp.keys = None
-thisExp.addData('key_resp.keys',key_resp.keys)
-if key_resp.keys != None:  # we had a response
-    thisExp.addData('key_resp.rt', key_resp.rt)
-thisExp.addData('key_resp.started', key_resp.tStartRefresh)
-thisExp.addData('key_resp.stopped', key_resp.tStopRefresh)
-thisExp.nextEntry()
 # the Routine "instr" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 
@@ -260,15 +268,15 @@ for thisVisualLoop in visualLoop:
     # ------Prepare to start Routine "visual_2"-------
     continueRoutine = True
     # update component parameters for each repeat
-    arrowImage.setImage(condition)
-    key_resp_2.keys = []
-    key_resp_2.rt = []
-    _key_resp_2_allKeys = []
-    feedbackSquare.setFillColor('yellow')
-    feedbackSquare.setOri(0.0)
-    feedbackSquare.setLineColor('yellow')
+    arrow_image.setImage(condition)
+    resp_vis.keys = []
+    resp_vis.rt = []
+    _resp_vis_allKeys = []
+    feedback_vis.setFillColor('green')
+    feedback_vis.setOri(0.0)
+    feedback_vis.setLineColor('green')
     # keep track of which components have finished
-    visual_2Components = [centerSquare, arrowImage, key_resp_2, feedbackSquare]
+    visual_2Components = [center_vis, arrow_image, resp_vis, feedback_vis]
     for thisComponent in visual_2Components:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -291,87 +299,84 @@ for thisVisualLoop in visualLoop:
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
         
-        # *centerSquare* updates
-        if centerSquare.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        # *center_vis* updates
+        if center_vis.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
             # keep track of start time/frame for later
-            centerSquare.frameNStart = frameN  # exact frame index
-            centerSquare.tStart = t  # local t and not account for scr refresh
-            centerSquare.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(centerSquare, 'tStartRefresh')  # time at next scr refresh
-            centerSquare.setAutoDraw(True)
+            center_vis.frameNStart = frameN  # exact frame index
+            center_vis.tStart = t  # local t and not account for scr refresh
+            center_vis.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(center_vis, 'tStartRefresh')  # time at next scr refresh
+            center_vis.setAutoDraw(True)
         
-        # *arrowImage* updates
-        if arrowImage.status == NOT_STARTED and tThisFlip >= randint(6, 15)-frameTolerance:
+        image_delay = randint(6, 15)
+        print(image_delay)
+        # *arrow_image* updates
+        if arrow_image.status == NOT_STARTED and tThisFlip >= image_delay-frameTolerance:
             # keep track of start time/frame for later
-            arrowImage.frameNStart = frameN  # exact frame index
-            arrowImage.tStart = t  # local t and not account for scr refresh
-            arrowImage.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(arrowImage, 'tStartRefresh')  # time at next scr refresh
-            arrowImage.setAutoDraw(True)
-        if arrowImage.status == STARTED:
+            arrow_image.frameNStart = frameN  # exact frame index
+            arrow_image.tStart = t  # local t and not account for scr refresh
+            arrow_image.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(arrow_image, 'tStartRefresh')  # time at next scr refresh
+            arrow_image.setAutoDraw(True)
+        if arrow_image.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > arrowImage.tStartRefresh + 0.5-frameTolerance:
+            if tThisFlipGlobal > arrow_image.tStartRefresh + 0.5-frameTolerance:
                 # keep track of stop time/frame for later
-                arrowImage.tStop = t  # not accounting for scr refresh
-                arrowImage.frameNStop = frameN  # exact frame index
-                win.timeOnFlip(arrowImage, 'tStopRefresh')  # time at next scr refresh
-                arrowImage.setAutoDraw(False)
+                arrow_image.tStop = t  # not accounting for scr refresh
+                arrow_image.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(arrow_image, 'tStopRefresh')  # time at next scr refresh
+                arrow_image.setAutoDraw(False)
         
-        # *key_resp_2* updates
+        # *resp_vis* updates
         waitOnFlip = False
-        if key_resp_2.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        if resp_vis.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
             # keep track of start time/frame for later
-            key_resp_2.frameNStart = frameN  # exact frame index
-            key_resp_2.tStart = t  # local t and not account for scr refresh
-            key_resp_2.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(key_resp_2, 'tStartRefresh')  # time at next scr refresh
-            key_resp_2.status = STARTED
+            resp_vis.frameNStart = frameN  # exact frame index
+            resp_vis.tStart = t  # local t and not account for scr refresh
+            resp_vis.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(resp_vis, 'tStartRefresh')  # time at next scr refresh
+            resp_vis.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
-            win.callOnFlip(key_resp_2.clock.reset)  # t=0 on next screen flip
-            win.callOnFlip(key_resp_2.clearEvents, eventType='keyboard')  # clear events on next screen flip
-        #last_key_resp = -1;
-        if key_resp_2.status == STARTED and not waitOnFlip:
-            theseKeys = key_resp_2.getKeys(keyList=['up', 'down'], waitRelease=False)
-            _key_resp_2_allKeys.extend(theseKeys)
-            if len(_key_resp_2_allKeys):
-                key_resp_2.keys = _key_resp_2_allKeys[-1].name  # just the last key pressed
-                key_resp_2.rt = _key_resp_2_allKeys[-1].rt
+            win.callOnFlip(resp_vis.clock.reset)  # t=0 on next screen flip
+            win.callOnFlip(resp_vis.clearEvents, eventType='keyboard')  # clear events on next screen flip
+        if resp_vis.status == STARTED and not waitOnFlip:
+            theseKeys = resp_vis.getKeys(keyList=['up', 'down'], waitRelease=False)
+            _resp_vis_allKeys.extend(theseKeys)
+            if len(_resp_vis_allKeys):
+                resp_vis.keys = _resp_vis_allKeys[-1].name  # just the last key pressed
+                resp_vis.rt = _resp_vis_allKeys[-1].rt
                 # was this correct?
-                if (key_resp_2.keys == str(correctAns)) or (key_resp_2.keys == correctAns):
-                    key_resp_2.corr = 1
-                    #last_key_resp = key_resp_2.corr
+                if (resp_vis.keys == str(correctAns)) or (resp_vis.keys == correctAns):
+                    resp_vis.corr = 1
                 else:
-                    key_resp_2.corr = 0
-                    #last_key_resp = key_resp_2.corr
+                    resp_vis.corr = 0
                 # a response ends the routine
                 continueRoutine = False
         
-        # *feedbackSquare* updates
-        if feedbackSquare.status == NOT_STARTED and key_resp_2.status == STARTED:
-            # set the correct colors
-            if  key_resp_2.corr ==1 : # if correct ans given, then feedbackSquare is green 
-                feedbackSquare.setFillColor('green')
-                feedbackSquare.setLineColor('green')
-            elif key_resp_2.corr == 0: # else if correct ans not given, then feedbackSquare is red
-                feedbackSquare.setFillColor('red')
-                feedbackSquare.setLineColor('red')
+        # *feedback_vis* updates
+        if feedback_vis.status == NOT_STARTED and resp_vis.status == STARTED:
+            if  resp_vis.corr == 1 : # if correct ans given, then feedbackSquare is green 
+                feedback_vis.setFillColor('green')
+                feedback_vis.setLineColor('green')
+            elif resp_vis.corr == 0: # else if correct ans not given, then feedbackSquare is red
+                feedback_vis.setFillColor('red')
+                feedback_vis.setLineColor('red')
             
             # keep track of start time/frame for later
-            feedbackSquare.frameNStart = frameN  # exact frame index
-            feedbackSquare.tStart = t  # local t and not account for scr refresh
-            feedbackSquare.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(feedbackSquare, 'tStartRefresh')  # time at next scr refresh
-            feedbackSquare.setAutoDraw(True)
-            
-        if feedbackSquare.status == STARTED:
+            feedback_vis.frameNStart = frameN  # exact frame index
+            feedback_vis.tStart = t  # local t and not account for scr refresh
+            feedback_vis.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(feedback_vis, 'tStartRefresh')  # time at next scr refresh
+            feedback_vis.setAutoDraw(True)
+        if feedback_vis.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > feedbackSquare.tStartRefresh + 0.5-frameTolerance:
+            if tThisFlipGlobal > feedback_vis.tStartRefresh + 0.5-frameTolerance:
                 # keep track of stop time/frame for later
-                feedbackSquare.tStop = t  # not accounting for scr refresh
-                feedbackSquare.frameNStop = frameN  # exact frame index
-                win.timeOnFlip(feedbackSquare, 'tStopRefresh')  # time at next scr refresh
-                feedbackSquare.setAutoDraw(False)
+                feedback_vis.tStop = t  # not accounting for scr refresh
+                feedback_vis.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(feedback_vis, 'tStopRefresh')  # time at next scr refresh
+                feedback_vis.setAutoDraw(False)
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -394,28 +399,27 @@ for thisVisualLoop in visualLoop:
     for thisComponent in visual_2Components:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    visualLoop.addData('centerSquare.started', centerSquare.tStartRefresh)
-    visualLoop.addData('centerSquare.stopped', centerSquare.tStopRefresh)
-    visualLoop.addData('arrowImage.started', arrowImage.tStartRefresh)
-    visualLoop.addData('arrowImage.stopped', arrowImage.tStopRefresh)
+    visualLoop.addData('center_vis.started', center_vis.tStartRefresh)
+    visualLoop.addData('center_vis.stopped', center_vis.tStopRefresh)
+    visualLoop.addData('arrow_image.started', arrow_image.tStartRefresh)
+    visualLoop.addData('arrow_image.stopped', arrow_image.tStopRefresh)
     # check responses
-    if key_resp_2.keys in ['', [], None]:  # No response was made
-        key_resp_2.keys = None
+    if resp_vis.keys in ['', [], None]:  # No response was made
+        resp_vis.keys = None
         # was no response the correct answer?!
         if str(correctAns).lower() == 'none':
-           key_resp_2.corr = 1;  # correct non-response
+           resp_vis.corr = 1;  # correct non-response
         else:
-           key_resp_2.corr = 0;  # failed to respond (incorrectly)
+           resp_vis.corr = 0;  # failed to respond (incorrectly)
     # store data for visualLoop (TrialHandler)
-    visualLoop.addData('key_resp_2.keys',key_resp_2.keys)
-    visualLoop.addData('key_resp_2.corr', key_resp_2.corr)
-    if key_resp_2.keys != None:  # we had a response
-        visualLoop.addData('key_resp_2.rt', key_resp_2.rt)
-        
-    visualLoop.addData('key_resp_2.started', key_resp_2.tStartRefresh)
-    visualLoop.addData('key_resp_2.stopped', key_resp_2.tStopRefresh)
-    visualLoop.addData('feedbackSquare.started', feedbackSquare.tStartRefresh)
-    visualLoop.addData('feedbackSquare.stopped', feedbackSquare.tStopRefresh)
+    visualLoop.addData('resp_vis.keys',resp_vis.keys)
+    visualLoop.addData('resp_vis.corr', resp_vis.corr)
+    if resp_vis.keys != None:  # we had a response
+        visualLoop.addData('resp_vis.rt', resp_vis.rt)
+    visualLoop.addData('resp_vis.started', resp_vis.tStartRefresh)
+    visualLoop.addData('resp_vis.stopped', resp_vis.tStopRefresh)
+    visualLoop.addData('feedback_vis.started', feedback_vis.tStartRefresh)
+    visualLoop.addData('feedback_vis.stopped', feedback_vis.tStopRefresh)
     # the Routine "visual_2" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     thisExp.nextEntry()
@@ -431,6 +435,93 @@ else:
 visualLoop.saveAsExcel(filename + '.xlsx', sheetName='visualLoop',
     stimOut=params,
     dataOut=['n','all_mean','all_std', 'all_raw'])
+
+# ------Prepare to start Routine "instr_audio"-------
+continueRoutine = True
+# update component parameters for each repeat
+key_resp_instructions.keys = []
+key_resp_instructions.rt = []
+_key_resp_instructions_allKeys = []
+# keep track of which components have finished
+instr_audioComponents = [audio_instructions, key_resp_instructions]
+for thisComponent in instr_audioComponents:
+    thisComponent.tStart = None
+    thisComponent.tStop = None
+    thisComponent.tStartRefresh = None
+    thisComponent.tStopRefresh = None
+    if hasattr(thisComponent, 'status'):
+        thisComponent.status = NOT_STARTED
+# reset timers
+t = 0
+_timeToFirstFrame = win.getFutureFlipTime(clock="now")
+instr_audioClock.reset(-_timeToFirstFrame)  # t0 is time of first possible flip
+frameN = -1
+
+# -------Run Routine "instr_audio"-------
+while continueRoutine:
+    # get current time
+    t = instr_audioClock.getTime()
+    tThisFlip = win.getFutureFlipTime(clock=instr_audioClock)
+    tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+    frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+    # update/draw components on each frame
+    
+    # *audio_instructions* updates
+    if audio_instructions.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        # keep track of start time/frame for later
+        audio_instructions.frameNStart = frameN  # exact frame index
+        audio_instructions.tStart = t  # local t and not account for scr refresh
+        audio_instructions.tStartRefresh = tThisFlipGlobal  # on global time
+        win.timeOnFlip(audio_instructions, 'tStartRefresh')  # time at next scr refresh
+        audio_instructions.setAutoDraw(True)
+    
+    # *key_resp_instructions* updates
+    waitOnFlip = False
+    if key_resp_instructions.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        # keep track of start time/frame for later
+        key_resp_instructions.frameNStart = frameN  # exact frame index
+        key_resp_instructions.tStart = t  # local t and not account for scr refresh
+        key_resp_instructions.tStartRefresh = tThisFlipGlobal  # on global time
+        win.timeOnFlip(key_resp_instructions, 'tStartRefresh')  # time at next scr refresh
+        key_resp_instructions.status = STARTED
+        # keyboard checking is just starting
+        waitOnFlip = True
+        win.callOnFlip(key_resp_instructions.clock.reset)  # t=0 on next screen flip
+        win.callOnFlip(key_resp_instructions.clearEvents, eventType='keyboard')  # clear events on next screen flip
+    if key_resp_instructions.status == STARTED and not waitOnFlip:
+        theseKeys = key_resp_instructions.getKeys(keyList=None, waitRelease=False)
+        _key_resp_instructions_allKeys.extend(theseKeys)
+        if len(_key_resp_instructions_allKeys):
+            key_resp_instructions.keys = _key_resp_instructions_allKeys[-1].name  # just the last key pressed
+            key_resp_instructions.rt = _key_resp_instructions_allKeys[-1].rt
+            # a response ends the routine
+            continueRoutine = False
+    
+    # check for quit (typically the Esc key)
+    if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+        core.quit()
+    
+    # check if all components have finished
+    if not continueRoutine:  # a component has requested a forced-end of Routine
+        break
+    continueRoutine = False  # will revert to True if at least one component still running
+    for thisComponent in instr_audioComponents:
+        if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+            continueRoutine = True
+            break  # at least one component has not yet finished
+    
+    # refresh the screen
+    if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+        win.flip()
+
+# -------Ending Routine "instr_audio"-------
+for thisComponent in instr_audioComponents:
+    if hasattr(thisComponent, "setAutoDraw"):
+        thisComponent.setAutoDraw(False)
+thisExp.addData('audio_instructions.started', audio_instructions.tStartRefresh)
+thisExp.addData('audio_instructions.stopped', audio_instructions.tStopRefresh)
+# the Routine "instr_audio" was not non-slip safe, so reset the non-slip timer
+routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
 audioLoop = data.TrialHandler(nReps=8.0, method='fullRandom', 
@@ -454,13 +545,13 @@ for thisAudioLoop in audioLoop:
     # ------Prepare to start Routine "audio"-------
     continueRoutine = True
     # update component parameters for each repeat
-    sound_1.setSound(pitch, secs=0.5, hamming=True)
-    sound_1.setVolume(1.0, log=False)
-    response.keys = []
-    response.rt = []
-    _response_allKeys = []
+    sound_aud.setSound(pitch, secs=0.5, hamming=True)
+    sound_aud.setVolume(1.0, log=False)
+    resp_aud.keys = []
+    resp_aud.rt = []
+    _resp_aud_allKeys = []
     # keep track of which components have finished
-    audioComponents = [sound_1, response, square]
+    audioComponents = [sound_aud, resp_aud, center_aud, feedback_aud]
     for thisComponent in audioComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -482,57 +573,81 @@ for thisAudioLoop in audioLoop:
         tThisFlipGlobal = win.getFutureFlipTime(clock=None)
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
-        # start/stop sound_1
-        if sound_1.status == NOT_STARTED and t >= randint(3, 7.5)-frameTolerance:
+        # start/stop sound_aud
+        aud_delay = randint(6, 15)
+        if sound_aud.status == NOT_STARTED and t >= aud_delay-frameTolerance:
             # keep track of start time/frame for later
-            sound_1.frameNStart = frameN  # exact frame index
-            sound_1.tStart = t  # local t and not account for scr refresh
-            sound_1.tStartRefresh = tThisFlipGlobal  # on global time
-            sound_1.play()  # start the sound (it finishes automatically)
-        if sound_1.status == STARTED:
+            sound_aud.frameNStart = frameN  # exact frame index
+            sound_aud.tStart = t  # local t and not account for scr refresh
+            sound_aud.tStartRefresh = tThisFlipGlobal  # on global time
+            sound_aud.play()  # start the sound (it finishes automatically)
+        if sound_aud.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > sound_1.tStartRefresh + 0.5-frameTolerance:
+            if tThisFlipGlobal > sound_aud.tStartRefresh + 0.5-frameTolerance:
                 # keep track of stop time/frame for later
-                sound_1.tStop = t  # not accounting for scr refresh
-                sound_1.frameNStop = frameN  # exact frame index
-                win.timeOnFlip(sound_1, 'tStopRefresh')  # time at next scr refresh
-                sound_1.stop()
+                sound_aud.tStop = t  # not accounting for scr refresh
+                sound_aud.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(sound_aud, 'tStopRefresh')  # time at next scr refresh
+                sound_aud.stop()
         
-        # *response* updates
+        # *resp_aud* updates
         waitOnFlip = False
-        if response.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        if resp_aud.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
             # keep track of start time/frame for later
-            response.frameNStart = frameN  # exact frame index
-            response.tStart = t  # local t and not account for scr refresh
-            response.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(response, 'tStartRefresh')  # time at next scr refresh
-            response.status = STARTED
+            resp_aud.frameNStart = frameN  # exact frame index
+            resp_aud.tStart = t  # local t and not account for scr refresh
+            resp_aud.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(resp_aud, 'tStartRefresh')  # time at next scr refresh
+            resp_aud.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
-            win.callOnFlip(response.clock.reset)  # t=0 on next screen flip
-            win.callOnFlip(response.clearEvents, eventType='keyboard')  # clear events on next screen flip
-        if response.status == STARTED and not waitOnFlip:
-            theseKeys = response.getKeys(keyList=['up', 'down'], waitRelease=False)
-            _response_allKeys.extend(theseKeys)
-            if len(_response_allKeys):
-                response.keys = _response_allKeys[-1].name  # just the last key pressed
-                response.rt = _response_allKeys[-1].rt
+            win.callOnFlip(resp_aud.clock.reset)  # t=0 on next screen flip
+            win.callOnFlip(resp_aud.clearEvents, eventType='keyboard')  # clear events on next screen flip
+        if resp_aud.status == STARTED and not waitOnFlip:
+            theseKeys = resp_aud.getKeys(keyList=['up', 'down'], waitRelease=False)
+            _resp_aud_allKeys.extend(theseKeys)
+            if len(_resp_aud_allKeys):
+                resp_aud.keys = _resp_aud_allKeys[-1].name  # just the last key pressed
+                resp_aud.rt = _resp_aud_allKeys[-1].rt
                 # was this correct?
-                if (response.keys == str(correctAns)) or (response.keys == correctAns):
-                    response.corr = 1
+                if (resp_aud.keys == str(correctAns)) or (resp_aud.keys == correctAns):
+                    resp_aud.corr = 1
                 else:
-                    response.corr = 0
+                    resp_aud.corr = 0
                 # a response ends the routine
                 continueRoutine = False
         
-        # *square* updates
-        if square.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        # *center_aud* updates
+        if center_aud.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
             # keep track of start time/frame for later
-            square.frameNStart = frameN  # exact frame index
-            square.tStart = t  # local t and not account for scr refresh
-            square.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(square, 'tStartRefresh')  # time at next scr refresh
-            square.setAutoDraw(True)
+            center_aud.frameNStart = frameN  # exact frame index
+            center_aud.tStart = t  # local t and not account for scr refresh
+            center_aud.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(center_aud, 'tStartRefresh')  # time at next scr refresh
+            center_aud.setAutoDraw(True)
+        
+        # *feedback_aud* updates
+        if feedback_aud.status == NOT_STARTED and resp_aud.status == STARTED:
+            if  resp_aud.corr ==1 : # if correct ans given, then feedbackSquare is green 
+                feedback_aud.setFillColor('green')
+                feedback_aud.setLineColor('green')
+            elif resp_aud.corr == 0: # else if correct ans not given, then feedbackSquare is red
+                feedback_aud.setFillColor('red')
+                feedback_aud.setLineColor('red')
+            # keep track of start time/frame for later
+            feedback_aud.frameNStart = frameN  # exact frame index
+            feedback_aud.tStart = t  # local t and not account for scr refresh
+            feedback_aud.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(feedback_aud, 'tStartRefresh')  # time at next scr refresh
+            feedback_aud.setAutoDraw(True)
+        if feedback_aud.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > feedback_aud.tStartRefresh + 0.5-frameTolerance:
+                # keep track of stop time/frame for later
+                feedback_aud.tStop = t  # not accounting for scr refresh
+                feedback_aud.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(feedback_aud, 'tStopRefresh')  # time at next scr refresh
+                feedback_aud.setAutoDraw(False)
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -555,26 +670,28 @@ for thisAudioLoop in audioLoop:
     for thisComponent in audioComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    sound_1.stop()  # ensure sound has stopped at end of routine
-    audioLoop.addData('sound_1.started', sound_1.tStart)
-    audioLoop.addData('sound_1.stopped', sound_1.tStop)
+    sound_aud.stop()  # ensure sound has stopped at end of routine
+    audioLoop.addData('sound_aud.started', sound_aud.tStart)
+    audioLoop.addData('sound_aud.stopped', sound_aud.tStop)
     # check responses
-    if response.keys in ['', [], None]:  # No response was made
-        response.keys = None
+    if resp_aud.keys in ['', [], None]:  # No response was made
+        resp_aud.keys = None
         # was no response the correct answer?!
         if str(correctAns).lower() == 'none':
-           response.corr = 1;  # correct non-response
+           resp_aud.corr = 1;  # correct non-response
         else:
-           response.corr = 0;  # failed to respond (incorrectly)
+           resp_aud.corr = 0;  # failed to respond (incorrectly)
     # store data for audioLoop (TrialHandler)
-    audioLoop.addData('response.keys',response.keys)
-    audioLoop.addData('response.corr', response.corr)
-    if response.keys != None:  # we had a response
-        audioLoop.addData('response.rt', response.rt)
-    audioLoop.addData('response.started', response.tStartRefresh)
-    audioLoop.addData('response.stopped', response.tStopRefresh)
-    audioLoop.addData('square.started', square.tStartRefresh)
-    audioLoop.addData('square.stopped', square.tStopRefresh)
+    audioLoop.addData('resp_aud.keys',resp_aud.keys)
+    audioLoop.addData('resp_aud.corr', resp_aud.corr)
+    if resp_aud.keys != None:  # we had a response
+        audioLoop.addData('resp_aud.rt', resp_aud.rt)
+    audioLoop.addData('resp_aud.started', resp_aud.tStartRefresh)
+    audioLoop.addData('resp_aud.stopped', resp_aud.tStopRefresh)
+    audioLoop.addData('center_aud.started', center_aud.tStartRefresh)
+    audioLoop.addData('center_aud.stopped', center_aud.tStopRefresh)
+    audioLoop.addData('feedback_aud.started', feedback_aud.tStartRefresh)
+    audioLoop.addData('feedback_aud.stopped', feedback_aud.tStopRefresh)
     # the Routine "audio" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     thisExp.nextEntry()
