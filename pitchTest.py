@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2021.1.4),
-    on Thu Jun  3 11:00:15 2021
+    on Thu Jun  3 13:57:17 2021
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -101,9 +101,9 @@ center_vis = visual.Rect(
     opacity=None, depth=0.0, interpolate=True)
 arrow_image = visual.ImageStim(
     win=win,
-    name='arrow_image', 
+    name='arrow_image', units='pix', 
     image='sin', mask=None,
-    ori=0.0, pos=(0, 0), size=(0.15, 0.15),
+    ori=0.0, pos=(0, 0), size=(75, 75),
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-1.0)
@@ -114,6 +114,14 @@ feedback_vis = visual.Rect(
     ori=1.0, pos=(0, 0),
     lineWidth=1.0,     colorSpace='rgb',  lineColor='white', fillColor='white',
     opacity=None, depth=-3.0, interpolate=True)
+"""
+feedback_vis = visual.Rect(
+    win=win, name='feedback_vis',units='pix', 
+    width=(75, 75)[0], height=(75, 75)[1],
+    ori=1.0, pos=(0, 0),
+    lineWidth=1.0,     colorSpace='rgb',  lineColor='white', fillColor='white',
+    opacity=None, depth=-3.0, interpolate=True)
+"""
 
 # Initialize components for Routine "instr_audio"
 instr_audioClock = core.Clock()
@@ -275,6 +283,16 @@ for thisVisualLoop in visualLoop:
     feedback_vis.setFillColor('green')
     feedback_vis.setOri(0.0)
     feedback_vis.setLineColor('green')
+    
+    """
+    feedback_vis.setFillColor('green')
+    feedback_vis.setOri(0.0)
+    feedback_vis.setLineColor('green')
+    """
+    #trial timing
+    image_delay = randint(6, 15)
+    print(image_delay)
+    
     # keep track of which components have finished
     visual_2Components = [center_vis, arrow_image, resp_vis, feedback_vis]
     for thisComponent in visual_2Components:
@@ -308,8 +326,6 @@ for thisVisualLoop in visualLoop:
             win.timeOnFlip(center_vis, 'tStartRefresh')  # time at next scr refresh
             center_vis.setAutoDraw(True)
         
-        image_delay = randint(6, 15)
-        print(image_delay)
         # *arrow_image* updates
         if arrow_image.status == NOT_STARTED and tThisFlip >= image_delay-frameTolerance:
             # keep track of start time/frame for later
@@ -361,8 +377,8 @@ for thisVisualLoop in visualLoop:
                 feedback_vis.setLineColor('green')
             elif resp_vis.corr == 0: # else if correct ans not given, then feedbackSquare is red
                 feedback_vis.setFillColor('red')
-                feedback_vis.setLineColor('red')
-            
+                feedback_vis.setLineColor('red') 
+
             # keep track of start time/frame for later
             feedback_vis.frameNStart = frameN  # exact frame index
             feedback_vis.tStart = t  # local t and not account for scr refresh
@@ -377,6 +393,31 @@ for thisVisualLoop in visualLoop:
                 feedback_vis.frameNStop = frameN  # exact frame index
                 win.timeOnFlip(feedback_vis, 'tStopRefresh')  # time at next scr refresh
                 feedback_vis.setAutoDraw(False)
+        """
+        # *feedback_vis* updates
+        if feedback_vis.status == NOT_STARTED and resp_vis.status == STARTED:
+            if  resp_vis.corr == 1 : # if correct ans given, then feedbackSquare is green 
+                feedback_vis.setFillColor('green')
+                feedback_vis.setLineColor('green')
+            elif resp_vis.corr == 0: # else if correct ans not given, then feedbackSquare is red
+                feedback_vis.setFillColor('red')
+                feedback_vis.setLineColor('red') 
+            # keep track of start time/frame for later
+                feedback_vis.frameNStart = frameN  # exact frame index
+                feedback_vis.tStart = t  # local t and not account for scr refresh
+                feedback_vis.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(feedback_vis, 'tStartRefresh')  # time at next scr refresh
+                feedback_vis.setAutoDraw(True)
+        if feedback_vis.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > feedback_vis.tStartRefresh + 0.5-frameTolerance:
+                    # keep track of stop time/frame for later
+                    feedback_vis.tStop = t  # not accounting for scr refresh
+                    feedback_vis.frameNStop = frameN  # exact frame index
+                    win.timeOnFlip(feedback_vis, 'tStopRefresh')  # time at next scr refresh
+                    feedback_vis.setAutoDraw(False)
+        """
+        
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -420,6 +461,10 @@ for thisVisualLoop in visualLoop:
     visualLoop.addData('resp_vis.stopped', resp_vis.tStopRefresh)
     visualLoop.addData('feedback_vis.started', feedback_vis.tStartRefresh)
     visualLoop.addData('feedback_vis.stopped', feedback_vis.tStopRefresh)
+    """
+    visualLoop.addData('feedback_vis.started', feedback_vis.tStartRefresh)
+    visualLoop.addData('feedback_vis.stopped', feedback_vis.tStopRefresh)
+    """
     # the Routine "visual_2" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     thisExp.nextEntry()
@@ -550,6 +595,8 @@ for thisAudioLoop in audioLoop:
     resp_aud.keys = []
     resp_aud.rt = []
     _resp_aud_allKeys = []
+    aud_delay = randint(6, 15)
+    print(aud_delay)
     # keep track of which components have finished
     audioComponents = [sound_aud, resp_aud, center_aud, feedback_aud]
     for thisComponent in audioComponents:
@@ -574,7 +621,6 @@ for thisAudioLoop in audioLoop:
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
         # start/stop sound_aud
-        aud_delay = randint(6, 15)
         if sound_aud.status == NOT_STARTED and t >= aud_delay-frameTolerance:
             # keep track of start time/frame for later
             sound_aud.frameNStart = frameN  # exact frame index
@@ -628,12 +674,13 @@ for thisAudioLoop in audioLoop:
         
         # *feedback_aud* updates
         if feedback_aud.status == NOT_STARTED and resp_aud.status == STARTED:
-            if  resp_aud.corr ==1 : # if correct ans given, then feedbackSquare is green 
+            if  resp_aud.corr == 1 : # if correct ans given, then feedbackSquare is green 
                 feedback_aud.setFillColor('green')
                 feedback_aud.setLineColor('green')
             elif resp_aud.corr == 0: # else if correct ans not given, then feedbackSquare is red
                 feedback_aud.setFillColor('red')
-                feedback_aud.setLineColor('red')
+                feedback_aud.setLineColor('red') 
+
             # keep track of start time/frame for later
             feedback_aud.frameNStart = frameN  # exact frame index
             feedback_aud.tStart = t  # local t and not account for scr refresh
