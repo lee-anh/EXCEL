@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2021.1.4),
-    on Thu Jun  3 13:57:17 2021
+    on Fri Jun  4 08:39:52 2021
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -15,6 +15,8 @@ from __future__ import absolute_import, division
 
 from psychopy import locale_setup
 from psychopy import prefs
+import psychopy
+psychopy.prefs.hardware['audioLib'] = ['PTB', 'pyo','pygame']
 from psychopy import sound, gui, visual, core, data, event, logging, clock, colors
 from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED,
                                 STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
@@ -27,6 +29,8 @@ import os  # handy system and path functions
 import sys  # to get file system encoding
 
 from psychopy.hardware import keyboard
+
+
 
 
 
@@ -141,8 +145,8 @@ sound_aud = sound.Sound('A', secs=0.5, stereo=True, hamming=True,
 sound_aud.setVolume(1.0)
 resp_aud = keyboard.Keyboard()
 center_aud = visual.Rect(
-    win=win, name='center_aud',
-    width=(0.15, 0.15)[0], height=(0.15, 0.15)[1],
+    win=win, name='center_aud',units='pix', 
+    width=(75, 75)[0], height=(75, 75)[1],
     ori=0.0, pos=(0, 0),
     lineWidth=1.0,     colorSpace='rgb',  lineColor='white', fillColor='white',
     opacity=None, depth=-2.0, interpolate=True)
@@ -372,6 +376,7 @@ for thisVisualLoop in visualLoop:
         
         # *feedback_vis* updates
         if feedback_vis.status == NOT_STARTED and resp_vis.status == STARTED:
+            #set the color
             if  resp_vis.corr == 1 : # if correct ans given, then feedbackSquare is green 
                 feedback_vis.setFillColor('green')
                 feedback_vis.setLineColor('green')
@@ -674,13 +679,13 @@ for thisAudioLoop in audioLoop:
         
         # *feedback_aud* updates
         if feedback_aud.status == NOT_STARTED and resp_aud.status == STARTED:
+            #set the color
             if  resp_aud.corr == 1 : # if correct ans given, then feedbackSquare is green 
                 feedback_aud.setFillColor('green')
                 feedback_aud.setLineColor('green')
             elif resp_aud.corr == 0: # else if correct ans not given, then feedbackSquare is red
                 feedback_aud.setFillColor('red')
                 feedback_aud.setLineColor('red') 
-
             # keep track of start time/frame for later
             feedback_aud.frameNStart = frameN  # exact frame index
             feedback_aud.tStart = t  # local t and not account for scr refresh

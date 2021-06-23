@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Experiment</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych/plugins/jspsych-canvas-keyboard-response.js"></script>
+    <script src="jspsych/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="jspsych/plugins/jspsych-preload.js"></script>
+    <script src="jspsych/plugins/jspsych-instructions.js"></script>
+    <script src="jspsych/plugins/jspsych-call-function.js"></script>
+    <script src="jspsych-canvas-multi-keyboard-response.js"></script>
+    <script src="jspsych-canvas-animation.js"></script>
+    <link href="jspsych/css/jspsych.css" rel="stylesheet">
+
+    <style>
+        canvas{
+            border: #333 5px solid;
+        }
+    </style>
+
+
+</head>
+
+<body> </body>
+
+<script>
+
+
+    var timeline = [];
+
+
+    var instructions = {
+        type: 'instructions',
+        pages: ['Welcome!', '<p>Press the up key when you see an up arrow and down when you see a down arrow</p> <p> Click the next button to start</p>'],
+        show_clickable_nav: true
+    }
+
+
+
+
+
+    function middleSquare(c) {
+        var ctx = c.getContext('2d');
+
+        ctx.beginPath();
+
+        //draw the center square 
+        ctx.rect(200, 200, 100, 100);
+
+        ctx.stroke();
+
+    }
+
+
+
+    function downArrow(c) {
+        var ctx = c.getContext('2d');
+
+        ctx.beginPath();
+
+        //clear the center by drawing over 
+
+
+        ctx.fillStyle = 'white';
+        ctx.fillRect(200, 200, 100, 100);
+
+
+
+        //draw the center square 
+        ctx.rect(200, 200, 100, 100);
+
+        //draw the arrow
+        ctx.fillStyle = 'black'; 
+        ctx.fillRect(245, 210, 10, 50);
+        ctx.stroke();
+
+
+        //arrow head 
+        ctx.beginPath();
+        ctx.moveTo(230, 250);
+        ctx.lineTo(250, 280);
+        ctx.lineTo(270, 250);
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    function upArrow(c) {
+        var ctx = c.getContext('2d');
+
+        ctx.beginPath();
+
+        //clear the center by drawing over
+        
+        ctx.fillStyle = 'white';
+        ctx.fillRect(200, 200, 100, 100);
+
+        //draw the center square 
+        ctx.rect(200, 200, 100, 100);
+
+        //draw the arrow
+        ctx.fillStyle = 'black'; 
+        ctx.fillRect(245, 230, 10, 50);
+        ctx.stroke();
+
+        //up arrow head 
+        ctx.beginPath();
+        ctx.moveTo(230, 240);
+        ctx.lineTo(250, 210);
+        ctx.lineTo(270, 240);
+
+        ctx.fill();
+        ctx.stroke();
+    }
+
+
+
+
+    var visual_alert_trial = {
+        type: 'canvas-keyboard-response',
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        canvas_size: [500, 500],
+        choices: ['u', 'd'],
+        stimulus_duration: 500,
+        trial_duration: 2000,
+        data: {
+            condition: jsPsych.timelineVariable('condition'),
+            correct_response: jsPsych.timelineVariable('correct_response')
+        },
+
+        on_finish: function (data) {
+            var accuracy = false;
+            if (data.correct_response == data.response) {
+                accuracy = true;
+
+            }
+            data.accuracy = accuracy;
+        }
+    };
+
+
+
+    var vis_feedback = {
+        type: 'canvas-keyboard-response',
+        stimulus: function (c) {
+
+            var last_trial_accuracy = jsPsych.data.getLastTrialData().values()[0].accuracy;
+            if (last_trial_accuracy) {
+                //green square
+                var ctx = c.getContext('2d');
+                ctx.beginPath();
+                ctx.fillStyle = 'green';
+                ctx.fillRect(200, 200, 100, 100);
+
+                ctx.stroke();
+
+            } else {
+                //red square 
+                var ctx = c.getContext('2d');
+                ctx.beginPath();
+                ctx.fillStyle = 'red';
+                ctx.fillRect(200, 200, 100, 100);
+                ctx.stroke();
+
+            }
+
+        },
+        canvas_size: [500, 500],
+
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000
+    }
+
+    var vis_delay = {
+        type: 'canvas-keyboard-response',
+        stimulus: middleSquare,
+        canvas_size: [500, 500],
+        choices: jsPsych.NO_KEYS,
+        trial_duration: function () {
+            //delay between 6 and 15 seconds, inclusive 
+            return Math.floor(Math.random() * (15000 - 6000 + 1000) + 6000);
+        }
+    }
+
+    var vis_trial_info = [
+        { stimulus: upArrow, condition: 'up', correct_response: 'u' },
+        { stimulus: downArrow, condition: 'down', correct_response: 'd' }
+
+    ];
+
+
+
+
+
+    function middleSquareBackground(c) {
+        var ctx = c.getContext('2d');
+
+        ctx.beginPath();
+
+        //draw the center square 
+        ctx.rect(0, 0, 750, 750);
+        ctx.fill();
+
+        ctx.stroke();
+
+    }
+
+    var single_task_visual_procedure = {
+        type: 'canvas-animation',
+        main_stimulus: middleSquare,
+        canvas_size: [800, 800],
+        //choices: ['u', 'd'], 
+        //num_sub_trials: 6,
+        sub_trial_type1: upArrow,
+        sub_trial_type2: downArrow, 
+        //sub_trial_stimulus_duration: 500,
+        //sub_trial_trial_duration: 2000, 
+        //response_ends_sub_trial: true //currently this is not happening 
+        
+
+    }
+
+    jsPsych.init({
+        timeline: [instructions, single_task_visual_procedure],
+
+
+        on_finish: function () {
+            jsPsych.data.displayData();
+        }
+    })
+
+
+</script>
+
+</html>

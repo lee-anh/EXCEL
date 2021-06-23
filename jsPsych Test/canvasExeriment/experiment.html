@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Experiment</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych/plugins/jspsych-canvas-keyboard-response.js"></script>
+    <script src="jspsych/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="jspsych/plugins/jspsych-preload.js"></script>
+    <script src="jspsych/plugins/jspsych-instructions.js"></script>
+    <script src="jspsych/plugins/jspsych-call-function.js"></script>
+    <script src="jspsych-canvas-object-keyboard-response"></script>
+    <link href="jspsych/css/jspsych.css" rel="stylesheet">
+
+
+
+</head>
+
+<body> </body>
+
+<script>
+
+
+    var timeline = [];
+
+
+    var instructions = {
+        type: 'instructions',
+        pages: ['Welcome!', '<p>Press the up key when you see an up arrow and down when you see a down arrow</p> <p> Click the next button to start</p>'],
+        show_clickable_nav: true
+    }
+
+   
+
+
+
+    function middleSquare(c) {
+        var ctx = c.getContext('2d');
+
+        ctx.beginPath();
+
+        //draw the center square 
+        ctx.rect(200, 200, 100, 100);
+
+        ctx.stroke();
+
+    }
+
+
+
+    function downArrow(c) {
+        var ctx = c.getContext('2d');
+     
+        ctx.beginPath();
+
+        //draw the center square 
+        ctx.rect(200, 200, 100, 100);
+
+        //draw the arrow
+        ctx.fillRect(245, 210, 10, 50);
+        ctx.stroke();
+
+
+        //arrow head 
+        ctx.beginPath();
+        ctx.moveTo(230, 250);
+        ctx.lineTo(250, 280);
+        ctx.lineTo(270, 250);
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    function upArrow(c) {
+        var ctx = c.getContext('2d');
+
+        ctx.beginPath();
+
+        //draw the center square 
+        ctx.rect(200, 200, 100, 100);
+
+        //draw the arrow
+        ctx.fillRect(245, 230, 10, 50);
+        ctx.stroke();
+
+        //up arrow head 
+        ctx.beginPath();
+        ctx.moveTo(230, 240);
+        ctx.lineTo(250, 210);
+        ctx.lineTo(270, 240);
+
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    
+    var canvas_object = document.getElementById("jspsych-canvas-stimulus");
+
+
+
+
+    var visual_alert_trial = {
+        type: 'canvas-keyboard-response',
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        canvas_size: [500, 500], 
+        choices: ['u', 'd'],
+        stimulus_duration: 500,
+        trial_duration: 2000,
+        data: {
+            condition: jsPsych.timelineVariable('condition'),
+            correct_response: jsPsych.timelineVariable('correct_response')
+        },
+
+        on_finish: function (data) {
+            var accuracy = false;
+            if (data.correct_response == data.response) {
+                accuracy = true;
+
+            }
+            data.accuracy = accuracy;
+        }
+    };
+
+    var aud_alert_trial= {
+        type: 'audio-keyboard-response', 
+        stimulus: jsPsych.timelineVariable('stimulus'), 
+        choices: ['u', 'd'],
+        stimulus_duration: 500,
+        trial_duration: 2000,
+        data: {
+            condition: jsPsych.timelineVariable('condition'),
+            correct_response: jsPsych.timelineVariable('correct_response')
+        },
+
+        on_finish: function (data) {
+            var accuracy = false;
+            if (data.correct_response == data.response) {
+                accuracy = true;
+
+            }
+            data.accuracy = accuracy;
+        }
+
+    }
+
+
+    var vis_feedback = {
+        type: 'canvas-keyboard-response',
+        stimulus: function (c) {
+
+            var last_trial_accuracy = jsPsych.data.getLastTrialData().values()[0].accuracy;
+            if (last_trial_accuracy) {
+                //green square
+                var ctx = c.getContext('2d');
+                ctx.beginPath();
+                ctx.fillStyle = 'green';
+                ctx.fillRect(200, 200, 100, 100);
+
+                ctx.stroke();
+
+            } else {
+                //red square 
+                var ctx = c.getContext('2d');
+                ctx.beginPath();
+                ctx.fillStyle = 'red';
+                ctx.fillRect(200, 200, 100, 100);
+                ctx.stroke();
+
+            }
+
+        },
+        canvas_size: [500, 500], 
+
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000
+    }
+
+    var vis_delay = {
+        type: 'canvas-keyboard-response', 
+        stimulus: middleSquare,
+        canvas_size: [500, 500], 
+        choices: jsPsych.NO_KEYS,
+        trial_duration: function () {
+            //delay between 6 and 15 seconds, inclusive 
+            return Math.floor(Math.random() * (15000 - 6000 + 1000) + 6000);
+        }
+    }
+
+    var vis_trial_info = [
+        { stimulus: upArrow, condition: 'up', correct_response: 'u' },
+        { stimulus: downArrow, condition: 'down', correct_response: 'd' }
+
+    ];
+
+    var aud_trial_info = [
+        { stimulus: 'aud/E5.mp3', condition: 'up', correct_response: 'u' },
+        { stimulus: 'aud/C5.mp3', condition: 'down', correct_response: 'd' }
+ 
+    ];
+
+   
+
+
+    function middleSquareBackground(c) {
+        var ctx =c.getContext('2d');
+
+        ctx.beginPath();
+
+        //draw the center square 
+        ctx.rect(0, 0, 750, 750);
+        ctx.fill();
+
+        ctx.stroke();
+
+    }
+
+    var single_task_visual_procedure = {
+        type: 'canvas-keyboard-response',
+        stimulus: middleSquareBackground, 
+        canvas_size: [750, 750], 
+        stimulus_duration: 10000, 
+        timeline: [visual_alert_trial, vis_feedback, vis_delay],
+        timeline_variables: vis_trial_info,
+        randomize_order: true,
+        sample: {
+            type: 'with-replacement',
+            size: 16
+        }
+
+    }
+
+    var single_task_audio_procedure = {
+        timeline: [aud_alert_trial, vis_feedback, vis_delay], 
+        timeline_variables: aud_trial_info, 
+        randomize_order:true, 
+        sample: {
+            type: 'with-replacement', 
+            size:16
+        }
+    }
+
+    
+
+    var all_audio = ['aud/C5.mp3', 'aud/E5.mp3'];
+
+    var preload = {
+        type: 'preload', 
+        audio: all_audio, 
+        show_preload_progress_bar:true, 
+        use_web_audio:false,
+    }
+
+    jsPsych.init({
+        timeline: [preload, instructions, single_task_audio_procedure, single_task_visual_procedure], 
+        
+        
+        on_finish: function () {
+            jsPsych.data.displayData();
+        }
+    })
+
+
+</script>
+
+</html>
