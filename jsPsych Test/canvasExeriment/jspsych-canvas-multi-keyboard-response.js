@@ -112,6 +112,8 @@ jsPsych.plugins["canvas-multi-keyboard-response"] = (function () {
     var current_trial_number = 0; //current trial number
     var after_response_called = false; 
 
+ 
+
 
     //draw the center square
     display_element.innerHTML = new_html;
@@ -175,8 +177,6 @@ jsPsych.plugins["canvas-multi-keyboard-response"] = (function () {
 
       }, trial.sub_trial_trial_duration);
     }
-
-      //}
 
     }
 
