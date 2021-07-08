@@ -113,8 +113,6 @@ jsPsych.plugins["canvas-multi-keyboard-response"] = (function () {
     var after_response_called = false; 
 
  
-
-
     //draw the center square
     display_element.innerHTML = new_html;
     let c = document.getElementById("jspsych-canvas-stim")
@@ -264,7 +262,6 @@ jsPsych.plugins["canvas-multi-keyboard-response"] = (function () {
       if(current_trial_number <= trial.num_sub_trials){
         jsPsych.pluginAPI.setTimeout(show_visual_stimulus, delay);
       }
-      
 
     }
 
@@ -280,7 +277,6 @@ jsPsych.plugins["canvas-multi-keyboard-response"] = (function () {
       if (typeof keyboardListener != 'undefined') {
         jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
       }
-
 
       //gather the data to store for the trial 
       trial_data.target_keys = JSON.stringify(target_key);
