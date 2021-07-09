@@ -34,12 +34,22 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         default: jsPsych.ALL_KEYS,
         description: 'The keys the subject is allowed to press to respond to the stimulus.'
       },
+
+      // number of subtrials 
       num_sub_trials: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Number of Sub Trials',
         default: 8,
         description: 'How many of each subtrial to show'
       },
+      
+      // ball velocity squared 
+      ball_velocity_squared: {
+        type: jsPsych.plugins.parameterType.INT, 
+        pretty_name: 'Ball velocity squared', 
+        default: 25, 
+        description: 'The squared velocity of how fast the ball should move'
+      }, 
 
       // timing
       trial_duration: {
