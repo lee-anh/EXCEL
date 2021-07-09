@@ -10,6 +10,7 @@
     <script src="jspsych/plugins/jspsych-call-function.js"></script>
     <script src="jspsych-canvas-multi-keyboard-response.js"></script>
     <script src="jspsych-canvas-animation-tracking.js"></script>
+    <script src="jspsych-canvas-animation-tracking-audio.js"></script>
     <link href="jspsych/css/jspsych.css" rel="stylesheet">
 
     <style>
@@ -35,6 +36,29 @@
         show_clickable_nav: true
     };
 
+    var preload = {
+        type: 'preload', 
+        auto_preload: true, 
+        show_progress_bar: true, // show the progress bar
+        max_load_time: 60000, // 1 minute 
+        error_message: 'The experiment failed to load. Please contact the researcher.'
+    }
+
+    var dual_task_audio_alerts_and_tracking_task = {
+        type: 'canvas-animation-tracking-audio', 
+        canvas_size: [750, 750], 
+        choices: ['arrowup', 'arrowdown'], 
+        high_stimulus: 'aud/E5.mp3', 
+        low_stimulus: 'aud/C5.mp3', 
+        trial_duration: 120000, 
+        stimulus_max_response_time: 120, 
+        feedback_duration: 30, 
+        mouse_sampling_rate: 3, 
+        num_sub_trials: 4, 
+        ball_velocity_squared: 25
+
+    }; 
+    
 
     var dual_task_visual_alerts_and_tracking_task = {
         type: 'canvas-animation-tracking',
@@ -51,8 +75,9 @@
     };
 
     jsPsych.init({
-        timeline: [instructions, dual_task_visual_alerts_and_tracking_task],
+       // timeline: [instructions, preload, dual_task_visual_alerts_and_tracking_task, instructions, dual_task_audio_alerts_and_tracking_task],
 
+        timeline: [instructions, dual_task_visual_alerts_and_tracking_task], 
 
         on_finish: function () {
             jsPsych.data.displayData();

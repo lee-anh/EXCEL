@@ -1,21 +1,21 @@
 /**
- * jspsych-canvas-animation
+ * jspsych-canvas-animation-audio
  * Claire Liu
  * ball code adapted from https://medium.com/dev-compendium/creating-a-bouncing-ball-animation-using-javascript-and-canvas-1076a09482e0 
  * mouse tracking code adapted from https://www.kirupa.com/canvas/follow_mouse_cursor.htm
- * plugin for a canvas that supports animation and mouse tracking on the canvas
+ * plugin for a canvas that supports animation and mouse tracking on the canvas and auditory alerts 
  * 
  */
 
-jsPsych.plugins["canvas-animation-tracking"] = (function () {
+jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
   var plugin = {};
 
 
   // variables that can be set from the html file 
   plugin.info = {
-    name: "canvas-animation-tracking",
-    description: 'This plugin supports canvas animation, mouse tracking, and visual stimuli',
+    name: "canvas-animation-tracking-audio",
+    description: 'This plugin supports canvas animation, mouse tracking, and audio stimuli',
     parameters: {
       // canvas
       canvas_size: {
@@ -25,6 +25,22 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         default: [500, 500],
         description: 'Array containing the height (first value) and width (second value) of the canvas element.'
       },
+
+      // stimuli
+      high_stimulus: { 
+        type: jsPsych.plugins.parameterType.AUDIO, 
+        pretty_name: 'High stimulus', 
+        default: undefined, 
+        description: 'High tone audio to be played'
+      }, 
+
+      low_stimulus: {
+        type: jsPsych.plugins.parameterType.AUDIO, 
+        pretty_name: 'Low stimulus', 
+        default: undefined, 
+        description: 'Low tone audio to be played'
+
+      }, 
 
       // keyboard choices 
       choices: {
@@ -59,17 +75,11 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         description: 'How long the trial should last in milliseconds.'
       },
 
-      stimulus_duration: {
-        type: jsPsych.plugins.parameterType.INT,
-        pretty_name: 'Stimulus duration',
-        default: 30,
-        description: 'How long the stimulus should be shown, in frames per second.'
-      },
 
       stimulus_max_response_time: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Stimulus max response time',
-        default: 90,
+        default: 120,
         description: 'The maximum response time after the stimulus is shown before their repsone is counted as a miss, in frames per second.'
       },
 
@@ -126,6 +136,60 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
     // deal with the page getting resized or scrolled
     window.addEventListener("scroll", updatePosition, false);
     window.addEventListener("resize", updatePosition, false);
+
+
+    var context = jsPsych.pluginAPI.audioContext(); 
+    
+    var audio; 
+    // load audio file
+    jsPsych.pluginAPI.getAudioBuffer(trial.high_stimulus)
+      .then(function (buffer) {
+        if (context !== null) {
+          audio = context.createBufferSource();
+          audio.buffer = buffer;
+          audio.connect(context.destination);
+          console.log("used if"); 
+        } else {
+          audio = buffer;
+          audio.currentTime = 0;
+          console.log("used else"); 
+
+        }
+        
+      })
+      .catch(function (err) {
+        console.error(`Failed to load audio file "${trial.high_stimulus}". Try checking the file path. We recommend using the preload plugin to load audio files.`)
+        console.error(err)
+      });
+
+    var context2 = jsPsych.pluginAPI.audioContext(); 
+    
+    var audio2; 
+    // load audio file
+    jsPsych.pluginAPI.getAudioBuffer(trial.low_stimulus)
+      .then(function (buffer) {
+        if (context2 !== null) {
+          audio2 = context2.createBufferSource();
+          audio2.buffer = buffer;
+          audio2.connect(context2.destination);
+          console.log("used if 2"); 
+        } else {
+          audio2 = buffer;
+          audio2.currentTime = 0;
+          console.log("used else 2"); 
+
+        }
+        
+      })
+      .catch(function (err) {
+        console.error(`Failed to load audio file "${trial.low_stimulus}". Try checking the file path. We recommend using the preload plugin to load audio files.`)
+        console.error(err)
+      });
+
+    
+      
+  
+    
 
     // stores the keyboard listener 
     var keyboardListener = {};
@@ -305,7 +369,6 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
     
       // update last_marker with feedback time 
       last_marker = number_of_refreshes + trial.feedback_duration; 
-      is_stimulus = false; 
       sub_trial_switch = 0; // time for the delay 
 
 
@@ -364,13 +427,13 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
       /**
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
-      function init1() {
-        console.log("init1 was called ")
+      function init2() {
+        console.log("init2 called")
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {
-          stimulus.push(trial.choices[0]); // "ArrowUp"
-          stimulus.push(trial.choices[1]); // "ArrowDown"
+          stimulus.push('arrowup'); // "ArrowUp"
+          stimulus.push('arrowdown'); // "ArrowDown"
         }
 
         // shuffle stimulus and delay durations 
@@ -464,35 +527,6 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         ctx.fillRect(canvas_center - square_radius, canvas_center - square_radius, square_radius * 2, square_radius * 2);
 
 
-        // show the stimulus if it is time to
-        ctx.fillStyle = 'black';
-        if (is_stimulus == true) {
-          if (stimulus[current_trial_number - 1] == "arrowup") {
-            // draw up arrow 
-            ctx.fillRect(Math.ceil(canvas.width / 2 - 5), Math.ceil(canvas.width / 2 - 20), 10, 50);
-         
-            // arrow head 
-            ctx.beginPath();
-            ctx.moveTo(Math.ceil(canvas.width / 2 - 20), Math.ceil(canvas.width / 2 - 10));
-            ctx.lineTo(Math.ceil(canvas.width / 2), Math.ceil(canvas.width / 2 - 40));
-            ctx.lineTo(Math.ceil(canvas.width / 2 + 20), Math.ceil(canvas.width / 2 - 10));
-            ctx.fill();
-
-          } else if (stimulus[current_trial_number - 1] == 'arrowdown') {
-            // draw the down arrow
-            ctx.fillStyle = 'black';
-            ctx.fillRect(Math.ceil(canvas.width / 2 - 5), Math.ceil(canvas.width / 2 - 40), 10, 50);
-            // arrow head 
-            ctx.beginPath();
-            ctx.moveTo(Math.ceil(canvas.width / 2 - 20), Math.ceil(canvas.width / 2));
-            ctx.lineTo(Math.ceil(canvas.width / 2), Math.ceil(canvas.width / 2 + 30));
-            ctx.lineTo(Math.ceil(canvas.width / 2 + 20), Math.ceil(canvas.width / 2));
-            ctx.fill();
-
-          }
-        }
-
-
 
       }
 
@@ -528,7 +562,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
           trial_data.number_of_refreshes = number_of_refreshes;
 
 
-          // display trial data 
+          // send trial data 
           jsPsych.finishTrial(trial_data);
 
           return;
@@ -552,7 +586,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         // if it's time for the next event 
         if (number_of_refreshes == last_marker) {
           after_response_called = false;
-          // if it is the first frame being shown, include hte begninning delay 
+          // if it is the first frame being shown, include the beginning delay 
           if (counter == 0) {
             last_marker = number_of_refreshes + 300; // beginning delay, 5 seconds 
             is_stimulus = false;
@@ -561,10 +595,24 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
 
             //time to show the stimulus 
           } else if (sub_trial_switch == 1 && current_trial_number < trial.num_sub_trials * 2) {
-            last_marker = number_of_refreshes + trial.stimulus_duration; 
+            last_marker = number_of_refreshes + trial.stimulus_max_response_time; 
             sub_trial_start_frame = number_of_refreshes;
-            is_stimulus = true;
+            is_stimulus = true; 
 
+            
+            //play the correct sound 
+            if(stimulus[current_trial_number] == 'arrowup'){
+              audio.play(); 
+
+            } else if (stimulus[current_trial_number] == 'arrowdown'){
+ 
+              audio2.play(); 
+
+            } else { 
+              console.log("stimulus was undefined"); 
+            }
+          
+          
             // update variables so the next event is waiting for a response
             is_rt = true;
             sub_trial_switch = 2; 
@@ -581,22 +629,14 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
 
             // time to wait for a response 
           } else if (sub_trial_switch == 2) {
-            is_stimulus = false;
-
-            // determine if it is still within the response time or rt is maxxed 
-            if (is_rt == true) {
-              last_marker = number_of_refreshes + trial.stimulus_max_response_time;
-              is_rt = false;
-            } else {
-              // call after_response if the response time is maxxed 
-              after_response(undefined);
-            }
+            
+              after_response(undefined); 
 
 
             // time to delay 
           } else if (sub_trial_switch == 0) {
             last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
-            //is_stimulus = false;
+            is_stimulus = false;
 
             // ready for next stimulus 
             sub_trial_switch = 1; 
@@ -713,7 +753,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
       }
 
       // start the code once the page has loaded
-      init1();
+      init2();
 
     }
 
