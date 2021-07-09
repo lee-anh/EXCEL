@@ -313,7 +313,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: " + response_info.key);
 
         // calculate and record response time 
-        rt.push(sub_trial_end_frame - sub_trial_start_frame)
+        rt.push(sub_trial_end_frame - sub_trial_start_frame); 
       }
 
       // check for correct response 
