@@ -203,6 +203,9 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
     // how long the trial should last in milliseconds
     var duration = trial.trial_duration;
 
+    // starting frame 
+    var starting_frame; 
+
     // how many times the animation has been refreshed, updated throughout trail 
     var number_of_refreshes;
 
@@ -427,8 +430,8 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
       /**
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
-      function init2() {
-        console.log("init2 called")
+      function init() {
+        console.log("init audio called")
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {
@@ -471,7 +474,8 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
         }
 
         // begin update loop
-        window.requestAnimationFrame(update)
+        last_marker = window.requestAnimationFrame(update) + 1; 
+        starting_frame = last_marker; 
       }
 
 
@@ -548,6 +552,8 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
           display_element.innerHTML = "";
           ctx = null;
 
+          //window.cancelAnimationFrame(update); 
+
           // write trial data 
           trial_data.mouseX = JSON.stringify(mouse_position_x);
           trial_data.mouseY = JSON.stringify(mouse_position_y);
@@ -559,7 +565,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
           trial_data.accuracy = JSON.stringify(accuracy);
           trial_data.response_times = JSON.stringify(rt);
           trial_data.my_time = current_time - start_time;
-          trial_data.number_of_refreshes = number_of_refreshes;
+          trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
 
 
           // send trial data 
@@ -753,7 +759,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
       }
 
       // start the code once the page has loaded
-      init2();
+      init();
 
     }
 

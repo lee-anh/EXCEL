@@ -50,7 +50,7 @@
         choices: ['arrowup', 'arrowdown'], 
         high_stimulus: 'aud/E5.mp3', 
         low_stimulus: 'aud/C5.mp3', 
-        trial_duration: 120000, 
+        trial_duration: 90000, 
         stimulus_max_response_time: 120, 
         feedback_duration: 30, 
         mouse_sampling_rate: 3, 
@@ -64,7 +64,7 @@
         type: 'canvas-animation-tracking',
         canvas_size: [750, 750],
         choices: ['arrowup', 'arrowdown'],
-        trial_duration: 120000,
+        trial_duration: 90000,
         stimulus_duration: 30,
         stimulus_max_response_time: 90,
         feedback_duration: 30,
@@ -75,9 +75,9 @@
     };
 
     jsPsych.init({
-       // timeline: [instructions, preload, dual_task_visual_alerts_and_tracking_task, instructions, dual_task_audio_alerts_and_tracking_task],
+        timeline: [instructions, preload, dual_task_audio_alerts_and_tracking_task, instructions, dual_task_visual_alerts_and_tracking_task],
 
-        timeline: [instructions, dual_task_visual_alerts_and_tracking_task], 
+       // timeline: [instructions, dual_task_visual_alerts_and_tracking_task], 
 
         on_finish: function () {
             jsPsych.data.displayData();

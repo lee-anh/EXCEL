@@ -139,6 +139,9 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
     // how long the trial should last in milliseconds
     var duration = trial.trial_duration;
 
+    // starting frame 
+    var starting_frame; 
+
     // how many times the animation has been refreshed, updated throughout trail 
     var number_of_refreshes;
 
@@ -364,8 +367,9 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
       /**
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
-      function init1() {
-        console.log("init1 was called ")
+      function init() {
+        console.log("init visual was called ")
+
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {
@@ -387,7 +391,10 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         // record the start time 
         start_time = Date.now();
         console.log("start time: " + start_time);
-
+        console.log("is_stimulus: " + is_stimulus); 
+        console.log("counter: " + counter); 
+        console.log("sub_trial_switch: " + sub_trial_switch); 
+        console.log("number_of_refreshes: " + number_of_refreshes);
         //start the mouse event listener 
         canvas.addEventListener("mousemove", setMousePosition, false);
 
@@ -408,7 +415,8 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         }
 
         // begin update loop
-        window.requestAnimationFrame(update)
+        last_marker = window.requestAnimationFrame(update) + 1; 
+        starting_frame = last_marker; 
       }
 
 
@@ -514,6 +522,8 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
           display_element.innerHTML = "";
           ctx = null;
 
+          //window.cancelAnimationFrame(update); 
+
           // write trial data 
           trial_data.mouseX = JSON.stringify(mouse_position_x);
           trial_data.mouseY = JSON.stringify(mouse_position_y);
@@ -525,7 +535,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
           trial_data.accuracy = JSON.stringify(accuracy);
           trial_data.response_times = JSON.stringify(rt);
           trial_data.my_time = current_time - start_time;
-          trial_data.number_of_refreshes = number_of_refreshes;
+          trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
 
 
           // display trial data 
@@ -564,6 +574,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
             last_marker = number_of_refreshes + trial.stimulus_duration; 
             sub_trial_start_frame = number_of_refreshes;
             is_stimulus = true;
+            console.log("got to time to show the stimulus ")
 
             // update variables so the next event is waiting for a response
             is_rt = true;
@@ -713,7 +724,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
       }
 
       // start the code once the page has loaded
-      init1();
+      init();
 
     }
 
