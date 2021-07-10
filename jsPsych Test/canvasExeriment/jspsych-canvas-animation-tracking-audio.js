@@ -94,7 +94,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Mouse sampling rate',
         default: 50,
-        description: 'How often (in frames) to sample the mous and ball locations.'
+        description: 'How often (in frames) to sample the mouse and ball locations.'
       }
 
 

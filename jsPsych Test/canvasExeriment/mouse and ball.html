@@ -7,10 +7,9 @@
     <script src="jspsych/plugins/jspsych-audio-keyboard-response.js"></script>
     <script src="jspsych/plugins/jspsych-preload.js"></script>
     <script src="jspsych/plugins/jspsych-instructions.js"></script>
-    <script src="jspsych/plugins/jspsych-call-function.js"></script>
-    <script src="jspsych-canvas-multi-keyboard-response.js"></script>
     <script src="jspsych-canvas-animation-tracking.js"></script>
     <script src="jspsych-canvas-animation-tracking-audio.js"></script>
+    <script src="jspsych-canvas-animation-visual.js"></script>
     <link href="jspsych/css/jspsych.css" rel="stylesheet">
 
     <style>
@@ -44,6 +43,17 @@
         error_message: 'The experiment failed to load. Please contact the researcher.'
     }
 
+    var single_task_visual_alerts = {
+        type: 'canvas-animation-visual', 
+        canvas_size: [750, 750], 
+        choices: ['arrowup', 'arrowdown'], 
+        trial_duration: 10000, 
+        stimulus_duration: 30, 
+        stimulus_max_response_time: 90, 
+        feedback_duration: 30
+
+    }
+
     var dual_task_audio_alerts_and_tracking_task = {
         type: 'canvas-animation-tracking-audio', 
         canvas_size: [750, 750], 
@@ -75,7 +85,7 @@
     };
 
     jsPsych.init({
-        timeline: [instructions, preload, dual_task_audio_alerts_and_tracking_task, instructions, dual_task_visual_alerts_and_tracking_task],
+        timeline: [instructions, preload, single_task_visual_alerts, instructions, dual_task_audio_alerts_and_tracking_task, instructions, dual_task_visual_alerts_and_tracking_task],
 
        // timeline: [instructions, dual_task_visual_alerts_and_tracking_task], 
 
