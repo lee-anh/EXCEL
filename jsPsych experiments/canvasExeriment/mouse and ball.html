@@ -7,9 +7,10 @@
     <script src="jspsych/plugins/jspsych-audio-keyboard-response.js"></script>
     <script src="jspsych/plugins/jspsych-preload.js"></script>
     <script src="jspsych/plugins/jspsych-instructions.js"></script>
-    <script src="jspsych-canvas-animation-tracking.js"></script>
+    <script src="jspsych-canvas-animation-tracking-visual.js"></script>
     <script src="jspsych-canvas-animation-tracking-audio.js"></script>
     <script src="jspsych-canvas-animation-visual.js"></script>
+    <script src="jspsych-canvas-animation-audio.js"></script>
     <link href="jspsych/css/jspsych.css" rel="stylesheet">
 
     <style>
@@ -60,6 +61,31 @@
 
     }
 
+    var single_task_audio_alerts = {
+        type: 'canvas-animation-aduio', 
+        canvas_size: [c_size, c_size], 
+        choices: ['arrowup', 'arrowdown'], 
+        high_stimulus: 'aud/E5.wav', 
+        low_stimulus: 'aud/C5.wav', 
+        trial_duration: 20000, 
+        stimulus_duration: 30, 
+        stimulus_max_response_time: 120, 
+        feedback_duration: fb_duration
+
+    }
+    var single_task_speech_audio_alerts = {
+        type: 'canvas-animation-aduio', 
+        canvas_size: [c_size, c_size], 
+        choices: ['arrowup', 'arrowdown'], 
+        high_stimulus: 'aud/up.wav', 
+        low_stimulus: 'aud/down.wav', 
+        trial_duration: 20000, 
+        stimulus_duration: 30, 
+        stimulus_max_response_time: 120, 
+        feedback_duration: fb_duration
+
+    }
+
     var dual_task_audio_alerts_and_tracking_task = {
         type: 'canvas-animation-tracking-audio', 
         canvas_size: [c_size, c_size], 
@@ -74,10 +100,24 @@
         ball_velocity_squared: ball_v_sq
 
     }; 
+
+    var dual_task_audio_alert_speech_and_tracking_task = {
+        type: 'canvas-animation-tracking-audio', 
+        canvas_size: [c_size, c_size], 
+        choices: ['arrowup', 'arrowdown'], 
+        high_stimulus: 'aud/up.wav', 
+        low_stimulus: 'aud/down.wav', 
+        trial_duration: 90000, 
+        stimulus_max_response_time: 120, 
+        feedback_duration: fb_duration,
+        mouse_sampling_rate: 3, 
+        num_sub_trials: 4, 
+        ball_velocity_squared: ball_v_sq
+    }
     
 
     var dual_task_visual_alerts_and_tracking_task = {
-        type: 'canvas-animation-tracking',
+        type: 'canvas-animation-tracking-visual',
         canvas_size: [c_size, c_size],
         choices: ['arrowup', 'arrowdown'],
         trial_duration: 90000,
@@ -90,24 +130,12 @@
 
     };
 
-    var dual_task_audio_alert_speech_and_tracking_task = {
-        type: 'canvas-animation-tracking-audio', 
-        canvas_size: [c_size, c_size], 
-        choices: ['arrowup', 'arrowdown'], 
-        high_stimulus: 'aud/E5.wav', 
-        low_stimulus: 'aud/C5.wav', 
-        trial_duration: 90000, 
-        stimulus_max_response_time: 120, 
-        feedback_duration: fb_duration,
-        mouse_sampling_rate: 3, 
-        num_sub_trials: 4, 
-        ball_velocity_squared: ball_v_sq
-    }
+    
 
     jsPsych.init({
-        timeline: [instructions, preload, single_task_visual_alerts, instructions, dual_task_audio_alerts_and_tracking_task, instructions, dual_task_visual_alerts_and_tracking_task],
+       // timeline: [instructions, preload, single_task_visual_alerts, instructions, dual_task_audio_alert_speech_and_tracking_task, instructions, dual_task_audio_alerts_and_tracking_task, instructions, dual_task_visual_alerts_and_tracking_task],
 
-       // timeline: [instructions, dual_task_visual_alerts_and_tracking_task], 
+        timeline: [instructions, dual_task_visual_alerts_and_tracking_task], 
 
         on_finish: function () {
             jsPsych.data.displayData();

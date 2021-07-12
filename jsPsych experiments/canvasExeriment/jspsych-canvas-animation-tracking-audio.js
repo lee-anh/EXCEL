@@ -266,9 +266,9 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
 
     // BE CAREFUL DEPENDING ON HOW MANY SUB STIMULI ARE CHOSEN 
-    // Adds up to 133 seconds, which should keep the total time under 180 seconds
+    // Adds up to 128 seconds, which keeps the total time under 180 seconds
     // is shuffled before each trial 
-    var delay_durations = [11, 7, 6, 15, 10, 7, 8, 8, 6, 12, 7, 6, 7, 9, 6, 8]; //  maximum 16 trials 
+    var delay_durations = [10, 7, 6, 15, 9, 7, 8, 7, 6, 11, 7, 6, 6, 9, 6, 8]; 
 
 
 
@@ -595,7 +595,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
           after_response_called = false;
           // if it is the first frame being shown, include the beginning delay 
           if (counter == 0) {
-            last_marker = number_of_refreshes + 300; // beginning delay, 5 seconds 
+            last_marker = number_of_refreshes + 600; // beginning delay, 10 seconds 
             is_stimulus = false;
             counter++;
             sub_trial_switch = 1;
