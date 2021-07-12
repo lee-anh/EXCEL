@@ -432,6 +432,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
        */
       function init() {
         console.log("init audio called")
+        console.log("Duration: " + duration); 
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {

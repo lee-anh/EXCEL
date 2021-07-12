@@ -277,7 +277,8 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
       function init() {
-        console.log("init visual was called ")
+        console.log("init visual was called "); 
+        console.log("Duration: " + duration); 
 
 
         // set up stimulus 
