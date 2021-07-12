@@ -594,7 +594,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
           after_response_called = false;
           // if it is the first frame being shown, include the beginning delay 
           if (counter == 0) {
-            last_marker = number_of_refreshes + 600; // beginning delay, 10 seconds 
+            last_marker = number_of_refreshes + 300; // beginning delay, 5 seconds 
             is_stimulus = false;
             counter++;
             sub_trial_switch = 1;
