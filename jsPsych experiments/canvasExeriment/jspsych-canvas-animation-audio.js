@@ -131,11 +131,13 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
     var canvas_pos = getPosition(canvas);
     var mouseX = 0;
     var mouseY = 0;
+    */
 
     // stimulus square calculations, assuming that canvas is a square 
     var canvas_center = canvas.width / 2;
     var square_radius = canvas.width / 8;
 
+    /*
     // deal with the page getting resized or scrolled
     window.addEventListener("scroll", updatePosition, false);
     window.addEventListener("resize", updatePosition, false);
@@ -435,14 +437,12 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
      */
     function show_visual_stimulus() {
 
-      console.log("show_visual_stimulus called");
 
       /**
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
       function init() {
-        console.log("init audio called")
-        console.log("Duration: " + duration); 
+        console.log("init audio called"); 
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {
@@ -465,10 +465,11 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
         start_time = Date.now();
         console.log("start time: " + start_time);
 
+        /*
         //start the mouse event listener 
         canvas.addEventListener("mousemove", setMousePosition, false);
 
-        /*
+       
 
         // generate random x and y components for the ball 
         var randomVelocityX = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3; // chose 3 because it is larger than 2.739, which is √30/2
@@ -526,11 +527,12 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
         // circular mouse tracker
         // ctx.arc(mouseX, mouseY, 30, 0, 2 * Math.PI, true);
         // ctx.fill();
+        */
 
         // center square 
         ctx.fillStyle = 'gray';
         // if it's time to give feedback 
-        */
+        
         if (after_response_called == true) {
 
           // if the feedback is correct, show a green square, else show red 
