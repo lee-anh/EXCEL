@@ -519,243 +519,243 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
 
 
 
-    }
+      }
 
 
-    /**
-     * Main helper function, includes time control for events and ball/border calculations 
-     * @authors Claire Liu and Code Draken <https://medium.com/dev-compendium/creating-a-bouncing-ball-animation-using-javascript-and-canvas-1076a09482e0>
-     * @returns trial data when it is time to end the trial 
-     */
-    function update() {
-      // record the current time 
-      current_time = Date.now();
-      
+      /**
+       * Main helper function, includes time control for events and ball/border calculations 
+       * @authors Claire Liu and Code Draken <https://medium.com/dev-compendium/creating-a-bouncing-ball-animation-using-javascript-and-canvas-1076a09482e0>
+       * @returns trial data when it is time to end the trial 
+       */
+      function update() {
+        // record the current time 
+        current_time = Date.now();
 
-      // check for end of trial 
-      if (current_time - start_time > duration) {
-        console.log("time to end");
-        console.log("Loop Duration: " + (current_time - start_time));
-        //clear the html display 
-        display_element.innerHTML = "";
-        ctx = null;
 
-        //window.cancelAnimationFrame(update); 
+        // check for end of trial 
+        if (current_time - start_time > duration) {
+          console.log("time to end");
+          console.log("Loop Duration: " + (current_time - start_time));
+          //clear the html display 
+          display_element.innerHTML = "";
+          ctx = null;
 
-        // write trial data 
-        trial_data.mouseX = JSON.stringify(mouse_position_x);
-        trial_data.mouseY = JSON.stringify(mouse_position_y);
-        trial_data.mouse_length = mouse_position_x.length;
-        trial_data.ballX = JSON.stringify(ball_position_x);
-        trial_data.ballY = JSON.stringify(ball_position_y);
-        trial_data.ball_length = ball_position_x.length;
+          //window.cancelAnimationFrame(update); 
+
+          // write trial data 
+          trial_data.mouseX = JSON.stringify(mouse_position_x);
+          trial_data.mouseY = JSON.stringify(mouse_position_y);
+          trial_data.mouse_length = mouse_position_x.length;
+          trial_data.ballX = JSON.stringify(ball_position_x);
+          trial_data.ballY = JSON.stringify(ball_position_y);
+          trial_data.ball_length = ball_position_x.length;
+          /*
+          trial_data.keys_pressed = JSON.stringify(keys_pressed);
+          trial_data.accuracy = JSON.stringify(accuracy);
+          trial_data.response_times = JSON.stringify(rt);
+          */
+          trial_data.my_time = current_time - start_time;
+          trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
+
+
+          // display trial data 
+          jsPsych.finishTrial(trial_data);
+
+          return;
+
+        }
+
+        // queue the next update
+        number_of_refreshes = window.requestAnimationFrame(update);
+
+        // record mouse and positions
+        if (number_of_refreshes % trial.mouse_sampling_rate == 0) {
+          mouse_position_x.push(mouseX);
+          mouse_position_y.push(mouseY);
+          ball_position_x.push(ball.x);
+          ball_position_y.push(ball.y);
+        }
+
         /*
-        trial_data.keys_pressed = JSON.stringify(keys_pressed);
-        trial_data.accuracy = JSON.stringify(accuracy);
-        trial_data.response_times = JSON.stringify(rt);
+  
+        // EVENT LOGIC 
+        // if it's time for the next event 
+        if (number_of_refreshes == last_marker) {
+  
+          after_response_called = false;
+          // if it is the first frame being shown, include hte begninning delay 
+          if (counter == 0) {
+            last_marker = number_of_refreshes + 300; // beginning delay, 5 seconds 
+            is_stimulus = false;
+            counter++;
+            sub_trial_switch = 1;
+  
+            //time to show the stimulus 
+          } else if (sub_trial_switch == 1 && current_trial_number < trial.num_sub_trials * 2) {
+            last_marker = number_of_refreshes + trial.stimulus_duration;
+            sub_trial_start_frame = number_of_refreshes;
+            is_stimulus = true;
+            console.log("got to time to show the stimulus ")
+  
+            // update variables so the next event is waiting for a response
+            is_rt = true;
+            sub_trial_switch = 2;
+            current_trial_number++;
+  
+            // activate keyboard listener 
+            keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
+              callback_function: after_response,
+              valid_responses: trial.choices,
+              persist: false,
+              allow_held_key: false
+            });
+  
+  
+            // time to wait for a response 
+          } else if (sub_trial_switch == 2) {
+            is_stimulus = false;
+  
+            // determine if it is still within the response time or rt is maxxed 
+            if (is_rt == true) {
+              last_marker = number_of_refreshes + trial.stimulus_max_response_time;
+              is_rt = false;
+            } else {
+              // call after_response if the response time is maxxed 
+              after_response(undefined);
+            }
+  
+  
+            // time to delay 
+          } else if (sub_trial_switch == 0) {
+            last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
+            //is_stimulus = false;
+  
+            // ready for next stimulus 
+            sub_trial_switch = 1;
+  
+          }
+  
+  
+        }
+  
         */
-        trial_data.my_time = current_time - start_time;
-        trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
 
 
-        // display trial data 
-        jsPsych.finishTrial(trial_data);
+        // BOUNDARY LOGIC 
+        // bottom bound / top of stimulus box 
+        if (ball.y + ball.radius >= canvas.height) {
 
-        return;
-
-      }
-
-      // queue the next update
-      number_of_refreshes = window.requestAnimationFrame(update);
-
-      // record mouse and positions
-      if (number_of_refreshes % trial.mouse_sampling_rate == 0) {
-        mouse_position_x.push(mouseX);
-        mouse_position_y.push(mouseY);
-        ball_position_x.push(ball.x);
-        ball_position_y.push(ball.y);
-      }
-
-      /*
-
-      // EVENT LOGIC 
-      // if it's time for the next event 
-      if (number_of_refreshes == last_marker) {
-
-        after_response_called = false;
-        // if it is the first frame being shown, include hte begninning delay 
-        if (counter == 0) {
-          last_marker = number_of_refreshes + 300; // beginning delay, 5 seconds 
-          is_stimulus = false;
-          counter++;
-          sub_trial_switch = 1;
-
-          //time to show the stimulus 
-        } else if (sub_trial_switch == 1 && current_trial_number < trial.num_sub_trials * 2) {
-          last_marker = number_of_refreshes + trial.stimulus_duration;
-          sub_trial_start_frame = number_of_refreshes;
-          is_stimulus = true;
-          console.log("got to time to show the stimulus ")
-
-          // update variables so the next event is waiting for a response
-          is_rt = true;
-          sub_trial_switch = 2;
-          current_trial_number++;
-
-          // activate keyboard listener 
-          keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
-            callback_function: after_response,
-            valid_responses: trial.choices,
-            persist: false,
-            allow_held_key: false
-          });
-
-
-          // time to wait for a response 
-        } else if (sub_trial_switch == 2) {
-          is_stimulus = false;
-
-          // determine if it is still within the response time or rt is maxxed 
-          if (is_rt == true) {
-            last_marker = number_of_refreshes + trial.stimulus_max_response_time;
-            is_rt = false;
-          } else {
-            // call after_response if the response time is maxxed 
-            after_response(undefined);
+          // new X velocity
+          ball.velX = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3;
+          if (Math.random() < 0.5) {
+            ball.velX *= -1;
           }
 
-
-          // time to delay 
-        } else if (sub_trial_switch == 0) {
-          last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
-          //is_stimulus = false;
-
-          // ready for next stimulus 
-          sub_trial_switch = 1;
+          // must have a negative Y velocity
+          ball.velY = -(Math.sqrt(velocity_squared - Math.pow(ball.velX, 2)));
+          ball.y = canvas.height - ball.radius; // moves ball to correct position to prevent multiple refreshes 
 
         }
 
+        // top bound / bottom of sitmulus box
+        if ((ball.y - ball.radius <= 0)) {
+          // new X velocity
+          ball.velX = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3;
+          if (Math.random() < 0.5) {
+            ball.velX *= -1;
+          }
+          // must have a postive Y velocity
+          ball.velY = Math.sqrt(velocity_squared - Math.pow(ball.velX, 2));
 
-      }
-
-      */
-
-
-      // BOUNDARY LOGIC 
-      // bottom bound / top of stimulus box 
-      if (ball.y + ball.radius >= canvas.height) {
-
-        // new X velocity
-        ball.velX = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3;
-        if (Math.random() < 0.5) {
-          ball.velX *= -1;
+          ball.y = ball.radius; // moves ball to correct position to prevent multiple refreshes 
         }
 
-        // must have a negative Y velocity
-        ball.velY = -(Math.sqrt(velocity_squared - Math.pow(ball.velX, 2)));
-        ball.y = canvas.height - ball.radius; // moves ball to correct position to prevent multiple refreshes 
+        // left bound / right of stimulus box 
+        if (ball.x - ball.radius <= 0) {
+          // new Y velocity 
 
-      }
+          ball.velY = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3;
+          if (Math.random() < 0.5) {
+            ball.velY *= -1;
+          }
+          // must have a positve X velocity
+          ball.velX = Math.sqrt(velocity_squared - Math.pow(ball.velY, 2));
 
-      // top bound / bottom of sitmulus box
-      if ((ball.y - ball.radius <= 0)) {
-        // new X velocity
-        ball.velX = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3;
-        if (Math.random() < 0.5) {
-          ball.velX *= -1;
-        }
-        // must have a postive Y velocity
-        ball.velY = Math.sqrt(velocity_squared - Math.pow(ball.velX, 2));
-
-        ball.y = ball.radius; // moves ball to correct position to prevent multiple refreshes 
-      }
-
-      // left bound / right of stimulus box 
-      if (ball.x - ball.radius <= 0) {
-        // new Y velocity 
-
-        ball.velY = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3;
-        if (Math.random() < 0.5) {
-          ball.velY *= -1;
-        }
-        // must have a positve X velocity
-        ball.velX = Math.sqrt(velocity_squared - Math.pow(ball.velY, 2));
-
-        ball.x = ball.radius;
-      }
-
-      // right bound / left of stimulus box 
-      if (ball.x + ball.radius >= canvas.width) {
-
-
-        // new Y velocity
-        ball.velY = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3;
-        if (Math.random() < 0.5) {
-          ball.velY *= -1;
+          ball.x = ball.radius;
         }
 
-        // must have a negative X velocity
-        ball.velX = -(Math.sqrt(velocity_squared - Math.pow(ball.velY, 2)));
-
-        ball.x = canvas.width - ball.radius;
-      }
+        // right bound / left of stimulus box 
+        if (ball.x + ball.radius >= canvas.width) {
 
 
+          // new Y velocity
+          ball.velY = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3;
+          if (Math.random() < 0.5) {
+            ball.velY *= -1;
+          }
 
-      // if ball is going to touch/cross over the center stimulus square
-      if ((ball.y - ball.radius <= canvas_center + square_radius && ball.y + ball.radius >= canvas_center - square_radius)
-        && (ball.x - ball.radius <= canvas_center + square_radius && ball.x + ball.radius >= canvas_center - square_radius)) {
+          // must have a negative X velocity
+          ball.velX = -(Math.sqrt(velocity_squared - Math.pow(ball.velY, 2)));
 
-
-        // calculate new velocities 
-        ball.velY = Math.random() * (Math.sqrt(velocity_squared) - 0.5) + 0.5;
-        ball.velX = Math.sqrt(velocity_squared - Math.pow(ball.velY, 2));
-
-        // console.log(ball.velX + ", " + ball.velY);
-
-
-        // if it hits to top half of the stimulus square, the y velocity should be negative
-        if (ball.y + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
-          // down ways 
-          ball.velY *= -1;
+          ball.x = canvas.width - ball.radius;
         }
 
-        // if it hits the bottom half of the stimulus square, the x velocity should be negative 
-        if (ball.x + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
-          ball.velX *= -1;
+
+
+        // if ball is going to touch/cross over the center stimulus square
+        if ((ball.y - ball.radius <= canvas_center + square_radius && ball.y + ball.radius >= canvas_center - square_radius)
+          && (ball.x - ball.radius <= canvas_center + square_radius && ball.x + ball.radius >= canvas_center - square_radius)) {
+
+
+          // calculate new velocities 
+          ball.velY = Math.random() * (Math.sqrt(velocity_squared) - 0.5) + 0.5;
+          ball.velX = Math.sqrt(velocity_squared - Math.pow(ball.velY, 2));
+
+          // console.log(ball.velX + ", " + ball.velY);
+
+
+          // if it hits to top half of the stimulus square, the y velocity should be negative
+          if (ball.y + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
+            // down ways 
+            ball.velY *= -1;
+          }
+
+          // if it hits the bottom half of the stimulus square, the x velocity should be negative 
+          if (ball.x + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
+            ball.velX *= -1;
+          }
+
         }
 
+        // reset insignificant amounts to 0
+        if (ball.velX < 0.01 && ball.velX > -0.01) {
+          ball.velX = 0;
+        }
+        if (ball.velY < 0.01 && ball.velY > -0.01) {
+          ball.velY = 0;
+        }
+
+        // update ball position
+        ball.x += ball.velX;
+        ball.y += ball.velY;
+
+        // update previously stored 
+        previousX = ball.x;
+        previousY = ball.y;
+
+        // draw after logic/calculations
+        draw()
       }
 
-      // reset insignificant amounts to 0
-      if (ball.velX < 0.01 && ball.velX > -0.01) {
-        ball.velX = 0;
-      }
-      if (ball.velY < 0.01 && ball.velY > -0.01) {
-        ball.velY = 0;
-      }
+      // start the code once the page has loaded
+      init();
 
-      // update ball position
-      ball.x += ball.velX;
-      ball.y += ball.velY;
-
-      // update previously stored 
-      previousX = ball.x;
-      previousY = ball.y;
-
-      // draw after logic/calculations
-      draw()
     }
 
-    // start the code once the page has loaded
-    init();
+    // call show_visual_stimlus to start the trial 
+    show_visual_stimulus();
 
-  }
+  };
 
-  // call show_visual_stimlus to start the trial 
-  show_visual_stimulus();
-
-};
-
-return plugin;
-}) ();
+  return plugin;
+})();

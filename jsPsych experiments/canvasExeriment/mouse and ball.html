@@ -7,6 +7,7 @@
     <script src="jspsych/plugins/jspsych-audio-keyboard-response.js"></script>
     <script src="jspsych/plugins/jspsych-preload.js"></script>
     <script src="jspsych/plugins/jspsych-instructions.js"></script>
+    <script src="my-html-slider-response.js"></script>
     <script src="jspsych-canvas-animation-tracking-visual.js"></script>
     <script src="jspsych-canvas-animation-tracking-audio.js"></script>
     <script src="jspsych-canvas-animation-visual.js"></script>
@@ -29,11 +30,12 @@
 
 
     var timeline = [];
-    
-    var c_size = 750; 
-    var t_duration = 10000; 
-    var fb_duration = 30; 
-    var ball_v_sq = 25; 
+
+    var c_size = 750;
+    var t_duration = 180000;
+    var fb_duration = 30;
+    var ball_v_sq = 25;
+    var num_s_trials = 8;
 
     var instructions = {
         type: 'instructions',
@@ -41,116 +43,184 @@
         show_clickable_nav: true
     };
 
-    
+
 
     var preload = {
-        type: 'preload', 
-        auto_preload: true, 
+        type: 'preload',
+        auto_preload: true,
         show_progress_bar: true, // show the progress bar
         max_load_time: 60000, // 1 minute 
         error_message: 'The experiment failed to load. Please contact the researcher.'
     }
 
     var single_task_visual_alerts = {
-        type: 'canvas-animation-visual', 
-        canvas_size: [c_size, c_size], 
-        choices: ['arrowup', 'arrowdown'], 
-        trial_duration: 30000, 
-        stimulus_duration: 30, 
-        stimulus_max_response_time: 90, 
-        feedback_duration: fb_duration
+        type: 'canvas-animation-visual',
+        canvas_size: [c_size, c_size],
+        choices: ['arrowup', 'arrowdown'],
+        trial_duration: t_duration,
+        stimulus_duration: 30,
+        stimulus_max_response_time: 90,
+        feedback_duration: fb_duration,
+        num_sub_trials: num_s_trials
 
     }
 
     var single_task_audio_alerts = {
-        type: 'canvas-animation-audio', 
-        canvas_size: [c_size, c_size], 
-        choices: ['arrowup', 'arrowdown'], 
-        high_stimulus: 'aud/E5.wav', 
-        low_stimulus: 'aud/C5.wav', 
-        trial_duration: 30000, 
-        stimulus_duration: 30, 
-        stimulus_max_response_time: 120, 
-        feedback_duration: fb_duration
+        type: 'canvas-animation-audio',
+        canvas_size: [c_size, c_size],
+        choices: ['arrowup', 'arrowdown'],
+        high_stimulus: 'aud/E5.wav',
+        low_stimulus: 'aud/C5.wav',
+        trial_duration: t_duration,
+        stimulus_duration: 30,
+        stimulus_max_response_time: 120,
+        feedback_duration: fb_duration,
+        num_sub_trials: num_s_trials
 
     }
     var single_task_speech_audio_alerts = {
-        type: 'canvas-animation-audio', 
-        canvas_size: [c_size, c_size], 
-        choices: ['arrowup', 'arrowdown'], 
-        high_stimulus: 'aud/up.wav', 
-        low_stimulus: 'aud/down.wav', 
-        trial_duration: 30000, 
-        stimulus_duration: 30, 
-        stimulus_max_response_time: 120, 
-        feedback_duration: fb_duration
+        type: 'canvas-animation-audio',
+        canvas_size: [c_size, c_size],
+        choices: ['arrowup', 'arrowdown'],
+        high_stimulus: 'aud/up.wav',
+        low_stimulus: 'aud/down.wav',
+        trial_duration: t_duration,
+        stimulus_duration: 30,
+        stimulus_max_response_time: 120,
+        feedback_duration: fb_duration,
+        num_sub_trials: num_s_trials
 
     }
 
     var single_task_tracking = {
-        type: 'canvas-animation-tracking', 
-        canvas_size: [c_size, c_size], 
-        ball_velocity_squared : ball_v_sq, 
-        trial_duration: 30000, 
-        mouse_sampling_rate: 3
-        
+        type: 'canvas-animation-tracking',
+        canvas_size: [c_size, c_size],
+        ball_velocity_squared: ball_v_sq,
+        trial_duration: t_duration,
+        mouse_sampling_rate: 3,
+        num_sub_trials: num_s_trials
 
     }
 
     var dual_task_audio_alerts_and_tracking_task = {
-        type: 'canvas-animation-tracking-audio', 
-        canvas_size: [c_size, c_size], 
-        choices: ['arrowup', 'arrowdown'], 
-        high_stimulus: 'aud/E5.wav', 
-        low_stimulus: 'aud/C5.wav', 
-        trial_duration: 30000, 
-        stimulus_max_response_time: 120, 
+        type: 'canvas-animation-tracking-audio',
+        canvas_size: [c_size, c_size],
+        choices: ['arrowup', 'arrowdown'],
+        high_stimulus: 'aud/E5.wav',
+        low_stimulus: 'aud/C5.wav',
+        trial_duration: t_duration,
+        stimulus_max_response_time: 120,
         feedback_duration: fb_duration,
-        mouse_sampling_rate: 3, 
-        num_sub_trials: 4, 
+        mouse_sampling_rate: 3,
+        num_sub_trials: num_s_trials,
         ball_velocity_squared: ball_v_sq
 
-    }; 
+    };
 
     var dual_task_audio_alert_speech_and_tracking_task = {
-        type: 'canvas-animation-tracking-audio', 
-        canvas_size: [c_size, c_size], 
-        choices: ['arrowup', 'arrowdown'], 
-        high_stimulus: 'aud/up.wav', 
-        low_stimulus: 'aud/down.wav', 
-        trial_duration: 30000, 
-        stimulus_max_response_time: 120, 
+        type: 'canvas-animation-tracking-audio',
+        canvas_size: [c_size, c_size],
+        choices: ['arrowup', 'arrowdown'],
+        high_stimulus: 'aud/up.wav',
+        low_stimulus: 'aud/down.wav',
+        trial_duration: t_duration,
+        stimulus_max_response_time: 120,
         feedback_duration: fb_duration,
-        mouse_sampling_rate: 3, 
-        num_sub_trials: 4, 
+        mouse_sampling_rate: 3,
+        num_sub_trials: num_s_trials,
         ball_velocity_squared: ball_v_sq
     }
-    
+
 
     var dual_task_visual_alerts_and_tracking_task = {
         type: 'canvas-animation-tracking-visual',
         canvas_size: [c_size, c_size],
         choices: ['arrowup', 'arrowdown'],
-        trial_duration: 30000,
+        trial_duration: t_duration,
         stimulus_duration: 30,
         stimulus_max_response_time: 90,
         feedback_duration: fb_duration,
         mouse_sampling_rate: 3,
-        num_sub_trials: 4, 
+        num_sub_trials: num_s_trials,
         ball_velocity_squared: ball_v_sq
 
     };
 
+    var nasa_tlx_intro = {
+        type: 'instructions',
+        show_clickable_nav: true,
+        pages: ['<p><b>General Instructions:</b> We are not only interested in assessing your performance but also the experiences you had during the different task conditions. Right now we are going to describe the technique that will be used to examine your experiences. In the most general sense we are examining the \“Workload\" you experienced. Workload is a difficult concept to define precisely, but a simple one to understand generally. The factors that influence your experience of workload may come from the task itself, your feelings about your own performance, how much effort you put in, or the stress and frustration you felt. The workload contributed by different task elements may change as you get more familiar with a task, perform easier or harder versions of it, or move from one task to another. Physical components of workload are relatively easy to conceptualize and evaluate. However, the mental components of workload may be more difficult to measure. </p><p>Since workload is something that is experienced individually by each person, there are no effective \"rulers\" that can be used to estimate the workload of different activities. One way to find out about workload is to ask people to describe the feelings they experienced. Because workload may be caused by many different factors, we would like you to evaluate several of them individually rather than lumping them into a single global evaluation of overall workload. This set of six rating scales was developed for you to use in evaluating your experiences during different tasks. Please read the descriptions of the scales carefully. If you have a question about any of the scales in the table, please ask the experimenter about it. It is extremely important that they be clear to you. You may keep the descriptions with you for reference during the experiment.</p>',
+            '<p><b>Rating instructions:</b> You will evaluate the task by marking each scale at the point which matches your experience. Each line has two endpoint descriptors that describe the scale. Note that \"own performance\" goes from \“good\" on the left to \“poor\" on the right. This order has been confusing for some people. Consider each scale individually. Your ratings will play an important role in the evaluation being conducted, thus, your active participation is essential to the success of this experiment, and is greatly appreciated.</p>',
+            '<p><b>Weights instructions:</b> The evaluation you are about to perform is a technique that has been developed by NASA to assess the relative importance of six factors in determining how much workload you experienced. The procedure is simple: You will be presented with a series of pairs of rating scale titles (for example, Effort vs. Mental Demands) and asked to choose which of the items was more important to your experience of workload in the task(s) that you just performed. Select the scale title that represents the more important contributor to workload for the specific task(s) you performed.</p>', 
+            '<p><b>Instructions:</b> Read the descriptions of factors that may affect workload and drag each slider on each scale to rate how much workload you experienced for that factor while doing the task.</p>']
+
+    }
+    
+    var nasa_tlx_mental_demand = {
+        type: 'my-html-slider-response', 
+        labels: ['low', 'high'], 
+        slider_width: 500, 
+        prompt: '<p>How much mental and perceptual activity was required (e.g. thinking, deciding, calculating, remembering, looking, searching, etc.)? Was the task easy or demanding, simple or complex, exacting or forgiving?</p>'
+    }
+
+    var nasa_tlx_physical_demand = {
+        type: 'my-html-slider-response', 
+        labels: ['low', 'high'], 
+        slider_width: 500, 
+        prompt: '<p>How much physical activity was required (e.g. pushing, pulling, tuming, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?</p><p><b>Mental Demand</b></p>'
+    }
+
+    var nasa_tlx_physical_demand = {
+        type: 'my-html-slider-response', 
+        labels: ['low', 'high'], 
+        slider_width: 500, 
+        prompt: '<p>How much physical activity was required (e.g. pushing, pulling, tuming, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?</p><p><b>Physical Demand</b></p>'
+    }
+
+    var nasa_tlx_temporal_demand = {
+        type: 'my-html-slider-response', 
+        labels: ['low', 'high'], 
+        slider_width: 500, 
+        prompt: '<p>How much time pressure did you feel due to the rate of pace at which the tasks or task elements occurred? Was the pace slow and leisurely or rapid and frantic?</p><p><b>Temporal Demand</b></p>'
+    }
+
+    var nasa_tlx_performance = {
+        type: 'my-html-slider-response', 
+        labels: ['low', 'high'], 
+        slider_width: 500, 
+        prompt: '<p>How successful do you think you were in accomplishing the goals of the task set by the experimenter (or yourself)? How satisfied were you with your performance in accomplishing these goals?</p><p><b>Performance</b></p>'
+    }
+
+    var nasa_tlx_effort = {
+        type: 'my-html-slider-response', 
+        labels: ['low', 'high'], 
+        slider_width: 500, 
+        prompt: '<p>How hard did you have to work (mentally and physically) to accomplish your level of performance?<p><p><b>Effort</p></b>'
+        
+    }
+
+    var nasa_tlx_frusteration = {
+        type: 'my-html-slider-response', 
+        labels: ['low', 'high'], 
+        slider_width: 500, 
+        prompt: '<p>How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed, and complacent did you feel during the task?</p><p><b>Frusteration</b></p>'
+    }
     
 
     jsPsych.init({
-        timeline: [instructions, preload, single_task_visual_alerts, 
-        instructions, single_task_tracking, instructions, single_task_audio_alerts, 
-        instructions, single_task_speech_audio_alerts, instructions, dual_task_audio_alert_speech_and_tracking_task, 
-        instructions, dual_task_audio_alerts_and_tracking_task, instructions, dual_task_visual_alerts_and_tracking_task],
+        //timeline: [instructions, preload, single_task_visual_alerts, 
+        //instructions, single_task_tracking, instructions, single_task_audio_alerts, 
+        //instructions, single_task_speech_audio_alerts, instructions, dual_task_audio_alert_speech_and_tracking_task, 
+        //instructions, dual_task_audio_alerts_and_tracking_task, instructions, dual_task_visual_alerts_and_tracking_task],
 
         //timeline: [instructions, single_task_visual_alerts, instructions, single_task_audio_alerts, instructions, single_task_speech_audio_alerts], 
-        //timeline: [instructions, single_task_tracking], 
+        // timeline: [instructions, preload, single_task_audio_alerts], 
+
+        // nasa tlx order 
+        timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frusteration],
+        
+        // do we want a progress bar?
+        show_progress_bar: true,
 
         on_finish: function () {
             jsPsych.data.displayData();

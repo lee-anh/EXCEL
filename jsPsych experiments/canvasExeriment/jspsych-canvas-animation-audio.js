@@ -9,6 +9,8 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
   var plugin = {};
 
+  jsPsych.pluginAPI.registerPreload('audio-keyboard-response', 'high_stimulus', 'audio');
+  jsPsych.pluginAPI.registerPreload('audio-keyboard-response', 'low_stimulus', 'audio');
 
   // variables that can be set from the html file 
   plugin.info = {
@@ -25,20 +27,20 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
       },
 
       // stimuli
-      high_stimulus: { 
-        type: jsPsych.plugins.parameterType.AUDIO, 
-        pretty_name: 'High stimulus', 
-        default: undefined, 
+      high_stimulus: {
+        type: jsPsych.plugins.parameterType.AUDIO,
+        pretty_name: 'High stimulus',
+        default: undefined,
         description: 'High tone audio to be played'
-      }, 
+      },
 
       low_stimulus: {
-        type: jsPsych.plugins.parameterType.AUDIO, 
-        pretty_name: 'Low stimulus', 
-        default: undefined, 
+        type: jsPsych.plugins.parameterType.AUDIO,
+        pretty_name: 'Low stimulus',
+        default: undefined,
         description: 'Low tone audio to be played'
 
-      }, 
+      },
 
       // keyboard choices 
       choices: {
@@ -56,7 +58,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
         default: 8,
         description: 'How many of each subtrial to show'
       },
-      
+
       // ball velocity squared 
       /*
       ball_velocity_squared: {
@@ -117,7 +119,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
     var new_html = '<div id="jspsych-canvas-keyboard-response-stimulus">' + '<canvas id="jspsych-canvas-stim" height="' + trial.canvas_size[0] + '" width="' + trial.canvas_size[1] + '"></canvas>' + '</div>';
     display_element.innerHTML = new_html;
 
-    
+
     // canvas elements
     var canvas = document.querySelector("#jspsych-canvas-stim");
     var ctx = canvas.getContext('2d');
@@ -144,33 +146,35 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
     */
 
-    var context = jsPsych.pluginAPI.audioContext(); 
-    
-    var audio; 
+    var context = jsPsych.pluginAPI.audioContext();
+
+    var audio;
     // load audio file
     jsPsych.pluginAPI.getAudioBuffer(trial.high_stimulus)
       .then(function (buffer) {
+        //if not preloaded 
         if (context !== null) {
           audio = context.createBufferSource();
           audio.buffer = buffer;
           audio.connect(context.destination);
-          console.log("used if"); 
+          console.log("used if");
         } else {
+          //is preloaded?
           audio = buffer;
           audio.currentTime = 0;
-          console.log("used else"); 
+          console.log("used else");
 
         }
-        
+
       })
       .catch(function (err) {
         console.error(`Failed to load audio file "${trial.high_stimulus}". Try checking the file path. We recommend using the preload plugin to load audio files.`)
         console.error(err)
       });
 
-    var context2 = jsPsych.pluginAPI.audioContext(); 
-    
-    var audio2; 
+    var context2 = jsPsych.pluginAPI.audioContext();
+
+    var audio2;
     // load audio file
     jsPsych.pluginAPI.getAudioBuffer(trial.low_stimulus)
       .then(function (buffer) {
@@ -178,24 +182,24 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
           audio2 = context2.createBufferSource();
           audio2.buffer = buffer;
           audio2.connect(context2.destination);
-          console.log("used if 2"); 
+          console.log("used if 2");
         } else {
           audio2 = buffer;
           audio2.currentTime = 0;
-          console.log("used else 2"); 
+          console.log("used else 2");
 
         }
-        
+
       })
       .catch(function (err) {
         console.error(`Failed to load audio file "${trial.low_stimulus}". Try checking the file path. We recommend using the preload plugin to load audio files.`)
         console.error(err)
       });
 
-    
-      
-  
-    
+
+
+
+
 
     // stores the keyboard listener 
     var keyboardListener = {};
@@ -210,7 +214,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
     var duration = trial.trial_duration;
 
     // starting frame 
-    var starting_frame; 
+    var starting_frame;
 
     // how many times the animation has been refreshed, updated throughout trail 
     var number_of_refreshes;
@@ -268,14 +272,15 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
     // keeps track of what trial number we are on 
     var current_trial_number = 0;
 
-
     // BE CAREFUL DEPENDING ON HOW MANY SUB STIMULI ARE CHOSEN 
-    // Adds up to 128 seconds, which keeps the total time under 180 seconds
     // is shuffled before each trial 
-    var delay_durations = [10, 7, 6, 15, 9, 7, 8, 7, 6, 11, 7, 6, 6, 9, 6, 8]; 
+    // need only 120 seconds of delay
+    // need only 15 delay durations -- be careful because will need to signal when the last one is 
+    var delay_durations = [10, 7, 6, 15, 9, 7, 8, 7, 6, 11, 7, 6, 6, 9, 6];
 
 
-    
+
+
 
     /**
      * updates the position of the mouse
@@ -291,7 +296,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
      * Helper function to get an element's exact position
      * @author kirpua <https://www.kirupa.com/canvas/follow_mouse_cursor.htm>
      * @param {HTMLCanvasElement} el the canvas to track on 
-     */ 
+     */
     /*
     function getPosition(el) {
       var xPos = 0;
@@ -320,14 +325,14 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
     }
 
     */
-  
+
 
 
     /**
      * set the initial mouse position and draw the mouse tracker
      * @author kirpua <https://www.kirupa.com/canvas/follow_mouse_cursor.htm>
      * @param {EventListenerObject} e the mouse object 
-     */ 
+     */
     /*
     function setMousePosition(e) {
       mouseX = e.clientX - canvas_pos.x;
@@ -343,7 +348,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
     */
 
-    
+
     /**
      * Fisher-Yates Algorithm for shuffling arrays
      * @author community wiki <https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array>
@@ -376,17 +381,18 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
     function after_response(response_info) {
 
       // it is time to give feedback 
-      after_response_called = true;  
+      after_response_called = true;
 
       // record the end frame 
       sub_trial_end_frame = number_of_refreshes;
 
-    
+
       // update last_marker with feedback time 
-      last_marker = number_of_refreshes + trial.feedback_duration; 
+      last_marker = number_of_refreshes + trial.feedback_duration;
       sub_trial_switch = 0; // time for the delay 
 
 
+      console.log("Feedback starts: " + (Date.now() - start_time)); 
       // give feedback based on response info 
       if (typeof response_info == 'undefined') {
         //record key pressed 
@@ -402,7 +408,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
         console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: " + response_info.key);
 
         // calculate and record response time 
-        rt.push(sub_trial_end_frame - sub_trial_start_frame); 
+        rt.push(sub_trial_end_frame - sub_trial_start_frame);
       }
 
       // check for correct response 
@@ -442,7 +448,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
       function init() {
-        console.log("init audio called"); 
+        console.log("init audio called");
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {
@@ -488,8 +494,8 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
         */
         // begin update loop
-        last_marker = window.requestAnimationFrame(update) + 1; 
-        starting_frame = last_marker; 
+        last_marker = window.requestAnimationFrame(update) + 1;
+        starting_frame = last_marker;
       }
 
 
@@ -532,7 +538,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
         // center square 
         ctx.fillStyle = 'gray';
         // if it's time to give feedback 
-        
+
         if (after_response_called == true) {
 
           // if the feedback is correct, show a green square, else show red 
@@ -550,7 +556,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
       }
 
-      
+
       /**
        * Main helper function, includes time control for events and ball/border calculations 
        * @authors Claire Liu and Code Draken <https://medium.com/dev-compendium/creating-a-bouncing-ball-animation-using-javascript-and-canvas-1076a09482e0>
@@ -621,27 +627,28 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
             //time to show the stimulus 
           } else if (sub_trial_switch == 1 && current_trial_number < trial.num_sub_trials * 2) {
-            last_marker = number_of_refreshes + trial.stimulus_max_response_time; 
+            last_marker = number_of_refreshes + trial.stimulus_max_response_time;
             sub_trial_start_frame = number_of_refreshes;
-            is_stimulus = true; 
+            is_stimulus = true;
+            console.log("Stimulus shown: " +  (current_time - start_time)); 
 
-            
+
             //play the correct sound 
-            if(stimulus[current_trial_number] == 'arrowup'){
-              audio.play(); 
+            if (stimulus[current_trial_number] == 'arrowup') {
+              audio.play();
 
-            } else if (stimulus[current_trial_number] == 'arrowdown'){
- 
-              audio2.play(); 
+            } else if (stimulus[current_trial_number] == 'arrowdown') {
 
-            } else { 
-              console.log("stimulus was undefined"); 
+              audio2.play();
+
+            } else {
+              console.log("stimulus was undefined");
             }
-          
-          
+
+
             // update variables so the next event is waiting for a response
-          
-            sub_trial_switch = 2; 
+
+            sub_trial_switch = 2;
             current_trial_number++;
 
             // activate keyboard listener 
@@ -655,17 +662,23 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
             // time to wait for a response 
           } else if (sub_trial_switch == 2) {
-            
-              after_response(undefined); 
+
+            after_response(undefined);
 
 
             // time to delay 
           } else if (sub_trial_switch == 0) {
-            last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
+            console.log("Delay begins: " + (current_time - start_time)); 
+            if(current_trial_number > delay_durations.length){
+              last_marker += 600; // add 10 seconds 
+            } else { 
+              last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
+            }
+            
             is_stimulus = false;
 
             // ready for next stimulus 
-            sub_trial_switch = 1; 
+            sub_trial_switch = 1;
 
           }
 

@@ -265,11 +265,11 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
 
 
-    // BE CAREFUL DEPENDING ON HOW MANY SUB STIMULI ARE CHOSEN 
-    // Adds up to 128 seconds, which keeps the total time under 180 seconds
+       // BE CAREFUL DEPENDING ON HOW MANY SUB STIMULI ARE CHOSEN 
     // is shuffled before each trial 
-    var delay_durations = [10, 7, 6, 15, 9, 7, 8, 7, 6, 11, 7, 6, 6, 9, 6, 8]; 
-
+    // need only 120 seconds of delay
+    // need only 15 delay durations -- be careful because will need to signal when the last one is 
+    var delay_durations = [10, 7, 6, 15, 9, 7, 8, 7, 6, 11, 7, 6, 6, 9, 6];
 
 
     /**
@@ -642,7 +642,11 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
             // time to delay 
           } else if (sub_trial_switch == 0) {
-            last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
+            if(current_trial_number > delay_durations.length){
+              last_marker += 600; // add 10 seconds 
+            } else { 
+              last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
+            }
             is_stimulus = false;
 
             // ready for next stimulus 

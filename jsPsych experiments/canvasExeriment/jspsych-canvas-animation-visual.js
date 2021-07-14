@@ -171,9 +171,10 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
 
 
     // BE CAREFUL DEPENDING ON HOW MANY SUB STIMULI ARE CHOSEN 
-    // Adds up to 128 seconds, which keeps the total time under 180 seconds if there are max 16 trials 
     // is shuffled before each trial 
-    var delay_durations = [10, 7, 6, 15, 9, 7, 8, 7, 6, 11, 7, 6, 6, 9, 6, 8]; 
+    // need only 120 seconds of delay
+    // need only 15 delay durations -- be careful because will need to signal when the last one is 
+    var delay_durations = [10, 7, 6, 15, 9, 7, 8, 7, 6, 11, 7, 6, 6, 9, 6];
 
 
 
@@ -221,6 +222,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
       sub_trial_switch = 0; // time for the delay 
 
 
+      console.log("Feedback starts: " + (Date.now() - start_time)); 
       // give feedback based on response info 
       if (typeof response_info == 'undefined') {
         //record key pressed 
@@ -276,7 +278,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
       function init() {
-        console.log("init visual was called"); 
+        console.log("init visual was called");
 
 
         // set up stimulus 
@@ -409,7 +411,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
         // if it's time for the next event 
         if (number_of_refreshes == last_marker) {
           after_response_called = false;
-          // if it is the first frame being shown, include hte begninning delay 
+          // if it is the first frame being shown, include the begninning delay 
           if (counter == 0) {
             last_marker = number_of_refreshes + 600; // beginning delay, 10 seconds 
             is_stimulus = false;
@@ -421,7 +423,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
             last_marker = number_of_refreshes + trial.stimulus_duration;
             sub_trial_start_frame = number_of_refreshes;
             is_stimulus = true;
-            console.log("got to time to show the stimulus ")
+            console.log("Stimulus shown: " +  (current_time - start_time)); 
 
             // update variables so the next event is waiting for a response
             is_rt = true;
@@ -441,10 +443,12 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
           } else if (sub_trial_switch == 2) {
             is_stimulus = false;
 
+
             // determine if it is still within the response time or rt is maxxed 
             if (is_rt == true) {
               last_marker = number_of_refreshes + trial.stimulus_max_response_time;
               is_rt = false;
+              console.log("Stimulus end: " + (current_time - start_time))
             } else {
               // call after_response if the response time is maxxed 
               after_response(undefined);
@@ -453,7 +457,14 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
 
             // time to delay 
           } else if (sub_trial_switch == 0) {
-            last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
+            console.log("Delay begins: " + (current_time - start_time)); 
+            //if it's the end of the trial, just add 10 seconds, other wise honor the specified delay
+            if(current_trial_number > delay_durations.length){
+              last_marker += 600; // add 10 seconds 
+            } else { 
+              last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
+            }
+            //last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
             //is_stimulus = false;
 
             // ready for next stimulus 
