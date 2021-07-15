@@ -312,6 +312,7 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
       sub_trial_switch = 0; // time for the delay 
 
 
+      console.log("Feedback starts: " + (Date.now() - start_time))
       // give feedback based on response info 
       if (typeof response_info == 'undefined') {
         //record key pressed 
@@ -564,7 +565,7 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
           after_response_called = false;
           // if it is the first frame being shown, include hte begninning delay 
           if (counter == 0) {
-            last_marker = number_of_refreshes + 300; // beginning delay, 5 seconds 
+            last_marker = number_of_refreshes + 600; // beginning delay, 5 seconds 
             is_stimulus = false;
             counter++;
             sub_trial_switch = 1;
@@ -574,7 +575,7 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
             last_marker = number_of_refreshes + trial.stimulus_duration;
             sub_trial_start_frame = number_of_refreshes;
             is_stimulus = true;
-            console.log("Time elapsed: " + current_time - start_time); 
+            console.log("Stimulus shown: " +  (current_time - start_time)); 
 
             // update variables so the next event is waiting for a response
             is_rt = true;
@@ -596,12 +597,9 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
 
             // determine if it is still within the response time or rt is maxxed 
             if (is_rt == true) {
-              if(current_trial_number > delay_durations.length){
-                last_marker += 600; // add 10 seconds 
-              } else { 
-                last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
-              }
+              last_marker = number_of_refreshes + trial.stimulus_max_response_time;
               is_rt = false;
+              console.log("Stimulus end: " + (current_time - start_time))
             } else {
               // call after_response if the response time is maxxed 
               after_response(undefined);
@@ -610,7 +608,13 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
 
             // time to delay 
           } else if (sub_trial_switch == 0) {
-            last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
+            console.log("Delay begins: " + (current_time - start_time)); 
+           
+            if(current_trial_number > delay_durations.length){
+              last_marker += 600; // add 10 seconds 
+            } else { 
+              last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
+            }
             //is_stimulus = false;
 
             // ready for next stimulus 
