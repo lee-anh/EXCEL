@@ -1,6 +1,6 @@
 /**
  * my-audio-button-response
- * Kristin Diep, with minor changes by Claire Liu
+ * Claire Liu (modified from Kristin Diep)
  *
  * plugin for playing an audio file and getting a keyboard response
  *

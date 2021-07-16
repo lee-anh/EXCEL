@@ -1,6 +1,6 @@
 /**
  * my-html-button-response
- * Josh de Leeuw, with minor changes by Claire Liu
+ * Claire Liu (modified from Josh de Leeuw)
  *
  * plugin for displaying a stimulus and getting a button response
  *

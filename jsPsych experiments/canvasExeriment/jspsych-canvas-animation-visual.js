@@ -222,7 +222,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
       sub_trial_switch = 0; // time for the delay 
 
 
-      console.log("Feedback starts: " + (Date.now() - start_time)); 
+      console.log("Feedback starts: " + (Date.now() - start_time));
       // give feedback based on response info 
       if (typeof response_info == 'undefined') {
         //record key pressed 
@@ -339,24 +339,24 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
         if (is_stimulus == true) {
           if (stimulus[current_trial_number - 1] == "arrowup") {
             // draw up arrow 
-            ctx.fillRect(Math.ceil(canvas.width / 2 - 5), Math.ceil(canvas.width / 2 - 20), 10, 50);
+            ctx.fillRect(Math.ceil(canvas.width / 2 - 13), Math.ceil(canvas.width / 2 - 20), 27, 50);
 
             // arrow head 
             ctx.beginPath();
-            ctx.moveTo(Math.ceil(canvas.width / 2 - 20), Math.ceil(canvas.width / 2 - 10));
-            ctx.lineTo(Math.ceil(canvas.width / 2), Math.ceil(canvas.width / 2 - 40));
-            ctx.lineTo(Math.ceil(canvas.width / 2 + 20), Math.ceil(canvas.width / 2 - 10));
+            ctx.moveTo(Math.ceil(canvas.width / 2 - 30), Math.ceil(canvas.width / 2 - 20));
+            ctx.lineTo(Math.ceil(canvas.width / 2), Math.ceil(canvas.width / 2 - 50));
+            ctx.lineTo(Math.ceil(canvas.width / 2 + 30), Math.ceil(canvas.width / 2 - 20));
             ctx.fill();
 
           } else if (stimulus[current_trial_number - 1] == 'arrowdown') {
             // draw the down arrow
             ctx.fillStyle = 'black';
-            ctx.fillRect(Math.ceil(canvas.width / 2 - 5), Math.ceil(canvas.width / 2 - 40), 10, 50);
+            ctx.fillRect(Math.ceil(canvas.width / 2 - 13), Math.ceil(canvas.width / 2 - 40), 27, 50);
             // arrow head 
             ctx.beginPath();
-            ctx.moveTo(Math.ceil(canvas.width / 2 - 20), Math.ceil(canvas.width / 2));
+            ctx.moveTo(Math.ceil(canvas.width / 2 - 30), Math.ceil(canvas.width / 2));
             ctx.lineTo(Math.ceil(canvas.width / 2), Math.ceil(canvas.width / 2 + 30));
-            ctx.lineTo(Math.ceil(canvas.width / 2 + 20), Math.ceil(canvas.width / 2));
+            ctx.lineTo(Math.ceil(canvas.width / 2 + 30), Math.ceil(canvas.width / 2));
             ctx.fill();
 
           }
@@ -423,7 +423,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
             last_marker = number_of_refreshes + trial.stimulus_duration;
             sub_trial_start_frame = number_of_refreshes;
             is_stimulus = true;
-            console.log("Stimulus shown: " +  (current_time - start_time)); 
+            console.log("Stimulus shown: " + (current_time - start_time));
 
             // update variables so the next event is waiting for a response
             is_rt = true;
@@ -457,11 +457,11 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
 
             // time to delay 
           } else if (sub_trial_switch == 0) {
-            console.log("Delay begins: " + (current_time - start_time)); 
+            console.log("Delay begins: " + (current_time - start_time));
             //if it's the end of the trial, just add 10 seconds, other wise honor the specified delay
-            if(current_trial_number > delay_durations.length){
+            if (current_trial_number > delay_durations.length) {
               last_marker += 600; // add 10 seconds 
-            } else { 
+            } else {
               last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];
             }
             //last_marker = number_of_refreshes + delay_durations[current_trial_number - 1];

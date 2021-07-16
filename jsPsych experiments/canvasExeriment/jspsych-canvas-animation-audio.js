@@ -9,8 +9,8 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
   var plugin = {};
 
-  jsPsych.pluginAPI.registerPreload('audio-keyboard-response', 'high_stimulus', 'audio');
-  jsPsych.pluginAPI.registerPreload('audio-keyboard-response', 'low_stimulus', 'audio');
+  jsPsych.pluginAPI.registerPreload('canvas-animation-audio', 'high_stimulus', 'audio');
+  jsPsych.pluginAPI.registerPreload('canvas-animation-audio', 'low_stimulus', 'audio');
 
   // variables that can be set from the html file 
   plugin.info = {

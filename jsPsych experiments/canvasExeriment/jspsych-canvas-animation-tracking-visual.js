@@ -476,24 +476,24 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
         if (is_stimulus == true) {
           if (stimulus[current_trial_number - 1] == "arrowup") {
             // draw up arrow 
-            ctx.fillRect(Math.ceil(canvas.width / 2 - 5), Math.ceil(canvas.width / 2 - 20), 10, 50);
+            ctx.fillRect(Math.ceil(canvas.width / 2 - 13), Math.ceil(canvas.width / 2 - 20), 27, 50);
 
             // arrow head 
             ctx.beginPath();
-            ctx.moveTo(Math.ceil(canvas.width / 2 - 20), Math.ceil(canvas.width / 2 - 10));
-            ctx.lineTo(Math.ceil(canvas.width / 2), Math.ceil(canvas.width / 2 - 40));
-            ctx.lineTo(Math.ceil(canvas.width / 2 + 20), Math.ceil(canvas.width / 2 - 10));
+            ctx.moveTo(Math.ceil(canvas.width / 2 - 30), Math.ceil(canvas.width / 2 - 20));
+            ctx.lineTo(Math.ceil(canvas.width / 2), Math.ceil(canvas.width / 2 - 50));
+            ctx.lineTo(Math.ceil(canvas.width / 2 + 30), Math.ceil(canvas.width / 2 - 20));
             ctx.fill();
 
           } else if (stimulus[current_trial_number - 1] == 'arrowdown') {
             // draw the down arrow
             ctx.fillStyle = 'black';
-            ctx.fillRect(Math.ceil(canvas.width / 2 - 5), Math.ceil(canvas.width / 2 - 40), 10, 50);
+            ctx.fillRect(Math.ceil(canvas.width / 2 - 13), Math.ceil(canvas.width / 2 - 40), 27, 50);
             // arrow head 
             ctx.beginPath();
-            ctx.moveTo(Math.ceil(canvas.width / 2 - 20), Math.ceil(canvas.width / 2));
+            ctx.moveTo(Math.ceil(canvas.width / 2 - 30), Math.ceil(canvas.width / 2));
             ctx.lineTo(Math.ceil(canvas.width / 2), Math.ceil(canvas.width / 2 + 30));
-            ctx.lineTo(Math.ceil(canvas.width / 2 + 20), Math.ceil(canvas.width / 2));
+            ctx.lineTo(Math.ceil(canvas.width / 2 + 30), Math.ceil(canvas.width / 2));
             ctx.fill();
 
           }
