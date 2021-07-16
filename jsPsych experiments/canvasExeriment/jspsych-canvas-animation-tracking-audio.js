@@ -11,6 +11,10 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
   var plugin = {};
 
+  jsPsych.pluginAPI.registerPreload('canvas-animation-tracking-audio', 'high_stimulus', 'audio');
+  jsPsych.pluginAPI.registerPreload('canvas-animation-tracking-audio', 'low_stimulus', 'audio');
+
+
 
   // variables that can be set from the html file 
   plugin.info = {
@@ -375,6 +379,8 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
       sub_trial_switch = 0; // time for the delay 
 
 
+      console.log("Feedback starts: " + (Date.now() - start_time)); 
+      //console.log("Feedback starts: " + number_of_refreshes); 
       // give feedback based on response info 
       if (typeof response_info == 'undefined') {
         //record key pressed 
@@ -548,6 +554,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
         // check for end of trial 
         if (current_time - start_time > duration) {
           console.log("time to end");
+          
           console.log("Loop Duration: " + (current_time - start_time));
           //clear the html display 
           display_element.innerHTML = "";
@@ -605,6 +612,8 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
             last_marker = number_of_refreshes + trial.stimulus_max_response_time; 
             sub_trial_start_frame = number_of_refreshes;
             is_stimulus = true; 
+            console.log("Stimulus shown: " +  (current_time - start_time)); 
+            //console.log("Stimulus shown (f): " + number_of_refreshes); 
 
             
             //play the correct sound 
@@ -642,6 +651,8 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
             // time to delay 
           } else if (sub_trial_switch == 0) {
+            console.log("Delay begins: " + (current_time - start_time)); 
+            //console.log("Delay begins (f): " + number_of_refreshes); 
             if(current_trial_number > delay_durations.length){
               last_marker += 600; // add 10 seconds 
             } else { 

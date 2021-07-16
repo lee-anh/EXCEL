@@ -5,9 +5,12 @@
     <title>Experiment</title>
     <script src="jspsych/jspsych.js"></script>
     <script src="jspsych/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="my-audio-button-response.js"></script>
     <script src="jspsych/plugins/jspsych-preload.js"></script>
     <script src="jspsych/plugins/jspsych-instructions.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-multi-choice.js"></script>
     <script src="my-html-slider-response.js"></script>
+    <script src="my-html-button-response.js"></script>
     <script src="jspsych-canvas-animation-tracking-visual.js"></script>
     <script src="jspsych-canvas-animation-tracking-audio.js"></script>
     <script src="jspsych-canvas-animation-visual.js"></script>
@@ -48,11 +51,50 @@
 
     var instructions = {
         type: 'instructions',
-        pages: ['Welcome!', '<p>Press the up key when you see an up arrow and down when you see a down arrow</p> <p> Click the next button to start</p>'],
+        pages: ['Welcome!', '<p>This experiment has 7 modules. Each module is 3 minutes and is followed by a short survey to measure your perceived workload.</p> <p> Click the next button to start</p>'],
         show_clickable_nav: true
     };
 
+    var audio_first_instruction = {
+        type: 'my-html-button-response', 
+        stimulus: '<p>In this module, you will be intermittenly interrupted with auditory interruptions.</p>',
+        choices: ['Continue']
+    }
 
+    var audio_alert_high = {
+        type: 'my-audio-button-response', 
+        stimulus: 'aud/E5.wav',
+        choices: ['Continue'],
+        prompt: '<p>When you hear this HIGHER sound, press the UP arrow on the keyboard</p>'
+    }
+
+    var audio_alert_low = {
+        type: 'my-audio-button-response', 
+        stimulus: 'aud/C5.wav',
+        choices: ['Continue'],
+        prompt: '<p>When you hear this LOWER sound, press the DOWN arrow on the keyboard</p>'
+    }
+
+    var speech_alert_high = {
+        type: 'my-audio-button-response', 
+        stimulus: 'aud/up.wav',
+        choices: ['Continue'],
+        prompt: '<p>When you hear the word \"UP\", press the UP arrow on the keyboard</p>'
+    }
+
+    var speech_alert_low = {
+        type: 'my-audio-button-response', 
+        stimulus: 'aud/.wav',
+        choices: ['Continue'],
+        prompt: '<p>When you hear the word \"DOWN\" press the DOWN arrow on the keyboard</p>'
+    }
+
+    var last_instruction = {
+        type: 'my-html-button-response', 
+        stimulus: '<p>The program will automatically end and move on to the next section when the run is over. Good luck!</p>', 
+        choices: ['Continue']
+       
+    }
 
     var preload = {
         type: 'preload',
@@ -215,12 +257,44 @@
 
     }
 
-    var nasa_tlx_frusteration = {
+  
+    var nasa_tlx_frustration = {
         type: 'my-html-slider-response',
         labels: ['low', 'high'],
         slider_width: 500,
         require_movement: true,
         prompt: '<p>How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed, and complacent did you feel during the task?</p><p><b>Frusteration</b></p>'
+    }
+
+    var weighting_prompt = "Select the factor that contributed more to workload for the task you completed."
+    var effort = "Effort"; 
+    var perfomance = "Performance"; 
+    var temporal_demand = "Temporal Demand"; 
+    var physical_demand = "Physical Demand"; 
+    var mental_demand = "Mental Demand"; 
+    var frustration = "Frusteration"; 
+    var nasa_tlx_weights_1 = {
+        type: 'survey-multi-choice', 
+        questions: [
+            {prompt: weighting_prompt, name: 'Question 1', options: [effort, perfomance], required: true, horizontal: true}, 
+            {prompt: weighting_prompt, name: 'Question 2', options: [temporal_demand, frustration], required: true, horizontal: true}, 
+            {prompt: weighting_prompt, name: 'Question 3', options: [temporal_demand, effort], required: true, horizontal: true}, 
+            {prompt: weighting_prompt, name: 'Question 4', options: [physical_demand, frustration], required: true, horizontal: true}, 
+            {prompt: weighting_prompt, name: 'Question 5', options: [perfomance, frustration], required: true, horizontal: true}, 
+        ]
+    }
+
+
+    var nasa_tlx = {
+        timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frustration, nasa_tlx_weights_1]
+    }
+
+    var audio_instructions = {
+        timeline: [audio_first_instruction, audio_alert_high, audio_alert_low, last_instruction]
+    }
+
+    var speech_instructions = {
+        timeline: [audio_first_instruction, speech_alert_high, speech_alert_low, last_instruction]
     }
 
 
@@ -230,12 +304,14 @@
         //instructions, single_task_speech_audio_alerts, instructions, dual_task_audio_alert_speech_and_tracking_task, 
         //instructions, dual_task_audio_alerts_and_tracking_task, instructions, dual_task_visual_alerts_and_tracking_task],
 
-        timeline: [instructions, dual_task_visual_alerts_and_tracking_task], 
-         //timeline: [instructions, preload, single_task_audio_alerts], 
+       // timeline: [instructions, dual_task_visual_alerts_and_tracking_task], 
+        // timeline: [instructions, preload, dual_task_visual_alerts_and_tracking_task, instructions, dual_task_audio_alert_speech_and_tracking_task], 
 
         // nasa tlx order
-        // timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frusteration],
+       //  timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frustration, nasa_tlx_weights_1],
 
+        //nested timeline is cool to organize things 
+        timeline: [instructions, audio_instructions, nasa_tlx],
         // do we want a progress bar?
         show_progress_bar: true,
 

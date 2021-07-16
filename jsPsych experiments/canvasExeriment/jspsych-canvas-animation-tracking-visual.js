@@ -313,6 +313,8 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
 
 
       console.log("Feedback starts: " + (Date.now() - start_time))
+      //console.log("Feedback starts (f): " + number_of_refreshes); 
+      
       // give feedback based on response info 
       if (typeof response_info == 'undefined') {
         //record key pressed 
@@ -391,11 +393,7 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
 
         // record the start time 
         start_time = Date.now();
-        console.log("start time: " + start_time);
-        console.log("is_stimulus: " + is_stimulus);
-        console.log("counter: " + counter);
-        console.log("sub_trial_switch: " + sub_trial_switch);
-        console.log("number_of_refreshes: " + number_of_refreshes);
+        
         //start the mouse event listener 
         canvas.addEventListener("mousemove", setMousePosition, false);
 
@@ -565,6 +563,7 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
           after_response_called = false;
           // if it is the first frame being shown, include hte begninning delay 
           if (counter == 0) {
+            console.log("Starting frame: " + number_of_refreshes); 
             last_marker = number_of_refreshes + 600; // beginning delay, 5 seconds 
             is_stimulus = false;
             counter++;
@@ -574,8 +573,9 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
           } else if (sub_trial_switch == 1 && current_trial_number < trial.num_sub_trials * 2) {
             last_marker = number_of_refreshes + trial.stimulus_duration;
             sub_trial_start_frame = number_of_refreshes;
-            is_stimulus = true;
-            console.log("Stimulus shown: " +  (current_time - start_time)); 
+            is_stimulus = true; 
+           console.log("Stimulus shown: " +  (current_time - start_time)); 
+           // console.log("Stimulus shown (f): " + number_of_refreshes); 
 
             // update variables so the next event is waiting for a response
             is_rt = true;
@@ -600,6 +600,7 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
               last_marker = number_of_refreshes + trial.stimulus_max_response_time;
               is_rt = false;
               console.log("Stimulus end: " + (current_time - start_time))
+              //console.log("Stimulus end (f): " + number_of_refreshes); 
             } else {
               // call after_response if the response time is maxxed 
               after_response(undefined);
@@ -609,6 +610,7 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
             // time to delay 
           } else if (sub_trial_switch == 0) {
             console.log("Delay begins: " + (current_time - start_time)); 
+            //console.log("Delay begins (f): " + number_of_refreshes); 
            
             if(current_trial_number > delay_durations.length){
               last_marker += 600; // add 10 seconds 
