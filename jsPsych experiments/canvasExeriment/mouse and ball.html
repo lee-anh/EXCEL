@@ -49,7 +49,7 @@
     var fb_duration = 30;
 
     // ball velocity squared
-    var ball_v_sq = 25;
+    var ball_v_sq = 15;
 
     // number of sub trials 
     var num_s_trials = 8;
@@ -294,7 +294,7 @@
     var single_task_tracking = {
         type: 'canvas-animation-tracking',
         canvas_size: [c_size, c_size],
-        ball_velocity_squared: ball_v_sq,
+        ball_velocity_squared: 35, //ball_v_sq,
         trial_duration: t_duration,
         mouse_sampling_rate: 3,
         num_sub_trials: num_s_trials
@@ -352,11 +352,16 @@
     var nasa_tlx_intro = {
         type: 'instructions',
         show_clickable_nav: true,
-        pages: ['<p><b>General Instructions:</b> We are not only interested in assessing your performance but also the experiences you had during the different task conditions. Right now we are going to describe the technique that will be used to examine your experiences. In the most general sense we are examining the \“Workload\" you experienced. Workload is a difficult concept to define precisely, but a simple one to understand generally. The factors that influence your experience of workload may come from the task itself, your feelings about your own performance, how much effort you put in, or the stress and frustration you felt. The workload contributed by different task elements may change as you get more familiar with a task, perform easier or harder versions of it, or move from one task to another. Physical components of workload are relatively easy to conceptualize and evaluate. However, the mental components of workload may be more difficult to measure. </p><p>Since workload is something that is experienced individually by each person, there are no effective \"rulers\" that can be used to estimate the workload of different activities. One way to find out about workload is to ask people to describe the feelings they experienced. Because workload may be caused by many different factors, we would like you to evaluate several of them individually rather than lumping them into a single global evaluation of overall workload. This set of six rating scales was developed for you to use in evaluating your experiences during different tasks. Please read the descriptions of the scales carefully. If you have a question about any of the scales in the table, please ask the experimenter about it. It is extremely important that they be clear to you. You may keep the descriptions with you for reference during the experiment.</p>',
+        pages: ['<p>We are not only interested in assessing your performance but also the experiences you had during the different task conditions. Right now we are going to describe the technique that will be used to examine your experiences. In the most general sense we are examining the \“Workload\" you experienced. Workload is a difficult concept to define precisely, but a simple one to understand generally. The factors that influence your experience of workload may come from the task itself, your feelings about your own performance, how much effort you put in, or the stress and frustration you felt. The workload contributed by different task elements may change as you get more familiar with a task, perform easier or harder versions of it, or move from one task to another. Physical components of workload are relatively easy to conceptualize and evaluate. However, the mental components of workload may be more difficult to measure. </p><p>Since workload is something that is experienced individually by each person, there are no effective \"rulers\" that can be used to estimate the workload of different activities. One way to find out about workload is to ask people to describe the feelings they experienced. Because workload may be caused by many different factors, we would like you to evaluate several of them individually rather than lumping them into a single global evaluation of overall workload. This set of six rating scales was developed for you to use in evaluating your experiences during different tasks. Please read the descriptions of the scales carefully. If you have a question about any of the scales in the table, please ask the experimenter about it. It is extremely important that they be clear to you. You may keep the descriptions with you for reference during the experiment.</p>',
             '<p><b>Rating instructions:</b> You will evaluate the task by marking each scale at the point which matches your experience. Each line has two endpoint descriptors that describe the scale. Note that \"own performance\" goes from \“good\" on the left to \“poor\" on the right. This order has been confusing for some people. Consider each scale individually. Your ratings will play an important role in the evaluation being conducted, thus, your active participation is essential to the success of this experiment, and is greatly appreciated.</p>',
-            '<p><b>Weights instructions:</b> The evaluation you are about to perform is a technique that has been developed by NASA to assess the relative importance of six factors in determining how much workload you experienced. The procedure is simple: You will be presented with a series of pairs of rating scale titles (for example, Effort vs. Mental Demands) and asked to choose which of the items was more important to your experience of workload in the task(s) that you just performed. Select the scale title that represents the more important contributor to workload for the specific task(s) you performed.</p>',
             '<p><b>Instructions:</b> Read the descriptions of factors that may affect workload and drag each slider on each scale to rate how much workload you experienced for that factor while doing the task.</p>']
 
+    }
+
+    var nasa_tlx_weights_instructions = {
+        type: 'my-html-button-response', 
+        stimulus: '<p><b>Weights instructions:</b> The evaluation you are about to perform is a technique that has been developed by NASA to assess the relative importance of six factors in determining how much workload you experienced. The procedure is simple: You will be presented with a series of pairs of rating scale titles (for example, Effort vs. Mental Demands) and asked to choose which of the items was more important to your experience of workload in the task(s) that you just performed. Select the scale title that represents the more important contributor to workload for the specific task(s) you performed.</p>',
+        choices: ['Continue']
     }
 
     var nasa_tlx_mental_demand = {
@@ -364,7 +369,7 @@
         labels: ['low', 'high'],
         slider_width: 500,
         require_movement: true,
-        prompt: '<p>How much mental and perceptual activity was required (e.g. thinking, deciding, calculating, remembering, looking, searching, etc.)? Was the task easy or demanding, simple or complex, exacting or forgiving?</p>'
+        prompt: '<p>How much mental and perceptual activity was required (e.g. thinking, deciding, calculating, remembering, looking, searching, etc.)? Was the task easy or demanding, simple or complex, exacting or forgiving?</p><p><b>Mental Demand</b></p>'
     }
 
     var nasa_tlx_physical_demand = {
@@ -372,16 +377,9 @@
         labels: ['low', 'high'],
         slider_width: 500,
         require_movement: true,
-        prompt: '<p>How much physical activity was required (e.g. pushing, pulling, tuming, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?</p><p><b>Mental Demand</b></p>'
+        prompt: '<p>How much physical activity was required (e.g. pushing, pulling, tuming, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?</p><p><b>Physcial Demand</b></p>'
     }
 
-    var nasa_tlx_physical_demand = {
-        type: 'my-html-slider-response',
-        labels: ['low', 'high'],
-        slider_width: 500,
-        require_movement: true,
-        prompt: '<p>How much physical activity was required (e.g. pushing, pulling, tuming, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?</p><p><b>Physical Demand</b></p>'
-    }
 
     var nasa_tlx_temporal_demand = {
         type: 'my-html-slider-response',
@@ -418,26 +416,118 @@
     }
 
     var weighting_prompt = "Select the factor that contributed more to workload for the task you completed."
-    var effort = "Effort";
-    var perfomance = "Performance";
-    var temporal_demand = "Temporal Demand";
-    var physical_demand = "Physical Demand";
-    var mental_demand = "Mental Demand";
-    var frustration = "Frusteration";
+    var effort = "<b>Effort</b> - How hard did you have to work (mentally and physically) to accomplish your level of performance?";
+    var perfomance = "<b>Performance</b> - How successful do you think you were in accomplishing the goals of the task set by the experimenter (or yourself)? How satisfied were you with your performance in accomplishing these goals?";
+    var temporal_demand = "<b>Temporal Demand</b> - How much time pressure did you feel due to the rate of pace at which the tasks or task elements occurred? Was the pace slow and leisurely or rapid and frantic?";
+    var physical_demand = "<b>Physical Demand</b> - How much physical activity was required (e.g. pushing, pulling, tuming, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?";
+    var mental_demand = "<b>Mental Demand</b> - How much mental and perceptual activity was required (e.g. thinking, deciding, calculating, remembering, looking, searching, etc)? Was the task easy or demanding, simple or complex, exacting or forgiving?";
+    var frustration = "<b>Frustration</b> - How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed, and complacent did you feel during the task?";
+  
     var nasa_tlx_weights_1 = {
         type: 'survey-multi-choice',
         questions: [
-            { prompt: weighting_prompt, name: 'Question 1', options: [effort, perfomance], required: true, horizontal: true },
-            { prompt: weighting_prompt, name: 'Question 2', options: [temporal_demand, frustration], required: true, horizontal: true },
-            { prompt: weighting_prompt, name: 'Question 3', options: [temporal_demand, effort], required: true, horizontal: true },
-            { prompt: weighting_prompt, name: 'Question 4', options: [physical_demand, frustration], required: true, horizontal: true },
-            { prompt: weighting_prompt, name: 'Question 5', options: [perfomance, frustration], required: true, horizontal: true },
+            { prompt: weighting_prompt, name: 'Question 1', options: [effort, perfomance], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_2 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 2', options: [temporal_demand, frustration], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_3 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 3', options: [temporal_demand, effort], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_4 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 4', options: [physical_demand, frustration], required: true, horizontal: true },
+        ]
+    }
+    var nasa_tlx_weights_5 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 5', options: [perfomance, frustration], required: true, horizontal: true },
+        ]
+    }
+    var nasa_tlx_weights_6 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 6', options: [physical_demand, temporal_demand], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_7 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 7', options: [physical_demand, perfomance], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_8 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 8', options: [temporal_demand, mental_demand], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_9 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 9', options: [frustration, effort], required: true, horizontal: true },
+        ]
+    }
+    var nasa_tlx_weights_10 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 10', options: [perfomance, mental_demand], required: true, horizontal: true },
         ]
     }
 
 
+    var nasa_tlx_weights_11 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 11', options: [perfomance, temporal_demand], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_12 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 12', options: [mental_demand, effort], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_13 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 13', options: [mental_demand, physical_demand], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_14 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 14', options: [effort, physical_demand], required: true, horizontal: true },
+        ]
+    }
+    var nasa_tlx_weights_15 = {
+        type: 'survey-multi-choice',
+        questions: [
+        { prompt: weighting_prompt, name: 'Question 15', options: [frustration, mental_demand], required: true, horizontal: true },
+        ], 
+        on_finish: function(){
+            jsPsych.setProgressBar(jsPsych.getProgressBarCompleted() + 1/7); 
+        }
+    }
+
+
+    
+
+
+    
+
+
     var nasa_tlx = {
-        timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frustration, nasa_tlx_weights_1]
+        timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frustration, nasa_tlx_weights_instructions, nasa_tlx_weights_1, nasa_tlx_weights_2, nasa_tlx_weights_3, nasa_tlx_weights_4, nasa_tlx_weights_5, nasa_tlx_weights_6, nasa_tlx_weights_7, nasa_tlx_weights_8, nasa_tlx_weights_9, nasa_tlx_weights_10, nasa_tlx_weights_11, nasa_tlx_weights_12, nasa_tlx_weights_13, nasa_tlx_weights_14, nasa_tlx_weights_15]
     }
     var audio_instructions = {
         timeline: [audio_first_instruction, audio_alert_high, audio_alert_low]
@@ -493,7 +583,7 @@
     }
     
     var dual_visual_trial = {
-        timeline: [tracking_instructions, visual_instructions, dual_task_visual_alerts_and_tracking_task, nasa_tlx]
+        timeline: [tracking_instructions, visual_instructions, dual_task_visual_alerts_and_tracking_task, nasa_tlx], 
     }
 
     var dual_trials = {
@@ -528,20 +618,24 @@
 
     jsPsych.init({
 
-       // preload, single_trials, dual_trials],
-         timeline: [instructions,  single_visual_trial], 
+        // use html audio so you can play sounds multiple times
+        use_webaudio:false, 
+
+        //timeline: [instructions, preload, single_trials, dual_trials],
+         timeline: [single_task_tracking], 
         // timeline: [instructions, preload, dual_task_visual_alerts_and_tracking_task, instructions, dual_task_audio_alert_speech_and_tracking_task], 
 
         // nasa tlx order
-        //  timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frustration, nasa_tlx_weights_1],
-       // timeline: [nasa_tlx], 
-        //nested timeline is cool to organize things 
+        //timeline: [nasa_tlx], 
+        //timeline: [single_tracking_trial], 
         // timeline: [instructions, audio_instructions, nasa_tlx],
         // do we want a progress bar?
-        // show_progress_bar: true,
+         show_progress_bar: true,
+         auto_update_progress_bar: false, 
 
         on_finish: function () {
             jsPsych.data.displayData();
+
         }
     })
 

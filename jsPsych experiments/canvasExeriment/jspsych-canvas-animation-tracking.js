@@ -50,7 +50,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
       ball_velocity_squared: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Ball velocity squared',
-        default: 25,
+        default: 15,
         description: 'The squared velocity of how fast the ball should move'
       },
 
@@ -118,7 +118,9 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
 
     // ball variables
     var ball;
-    var velocity_squared = 25;
+    var velocity_squared = trial.ball_velocity_squared;
+    var previousX = 30; 
+    var previousY = 30; 
 
     // mouse variables 
     var canvas_pos = getPosition(canvas);
@@ -468,7 +470,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         // ctx.fill();
 
         // center square 
-        ctx.fillStyle = 'gray';
+        ctx.fillStyle = '#cccccc';
         /*
         // if it's time to give feedback 
         if (after_response_called == true) {
@@ -583,7 +585,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         if (number_of_refreshes == last_marker) {
   
           after_response_called = false;
-          // if it is the first frame being shown, include hte begninning delay 
+          // if it is the first frame being shown, include the begninning delay 
           if (counter == 0) {
             last_marker = number_of_refreshes + 300; // beginning delay, 5 seconds 
             is_stimulus = false;
@@ -653,7 +655,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
 
           // must have a negative Y velocity
           ball.velY = -(Math.sqrt(velocity_squared - Math.pow(ball.velX, 2)));
-          ball.y = canvas.height - ball.radius; // moves ball to correct position to prevent multiple refreshes 
+          ball.y = canvas.height - ball.radius; // moves ball to correct position to prevent weird bouncing
 
         }
 
@@ -667,7 +669,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
           // must have a postive Y velocity
           ball.velY = Math.sqrt(velocity_squared - Math.pow(ball.velX, 2));
 
-          ball.y = ball.radius; // moves ball to correct position to prevent multiple refreshes 
+          ball.y = ball.radius; // moves ball to correct position to prevent weird bouncing
         }
 
         // left bound / right of stimulus box 
@@ -708,24 +710,104 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
 
 
           // calculate new velocities 
+          // Math.random() * (max - min) + min
           ball.velY = Math.random() * (Math.sqrt(velocity_squared) - 0.5) + 0.5;
-          ball.velX = Math.sqrt(velocity_squared - Math.pow(ball.velY, 2));
-
-          // console.log(ball.velX + ", " + ball.velY);
+          ball.velX = Math.sqrt(velocity_squared - Math.pow(ball.velY, 2)); // Use pythogorean's thm √velocity^2 - y^2
 
 
-          // if it hits to top half of the stimulus square, the y velocity should be negative
+
+          /*
+          // WORKS OK 
+          // if it hits the top half of the stimulus square, the y velocity should be negative
           if (ball.y + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
             // down ways 
             ball.velY *= -1;
+            console.log("top"); 
+          } else {
+            console.log("bottom" + "\n"); 
           }
 
-          // if it hits the bottom half of the stimulus square, the x velocity should be negative 
+          // if it hits the left half of the stimulus square, the x velocity should be negative 
           if (ball.x + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
+            // left 
             ball.velX *= -1;
+            console.log("left"); 
+          } else {
+            console.log("right" + "\n"); 
           }
+
+           
+        */
+
+
+          if(previousY <= canvas_center - square_radius){
+            //top boundary
+            ball.velY *= -1; 
+            if(Math.random() < 0.5){
+              ball.velX *= -1;
+            }
+
+            ball.y = canvas_center - square_radius - ball.radius; 
+
+            //console.log("top")
+          } else if(previousY >= canvas_center + square_radius){
+            //bottom boundary
+            if(Math.random() < 0.5){
+              ball.velX *= -1;
+            }
+
+            ball.y = canvas_center + square_radius + ball.radius; 
+
+            //console.log("bottom")
+          } else if(previousX <= canvas_center - square_radius){
+            // box left boundary
+            ball.velX *= -1; 
+            if(Math.random() < 0.5){
+              ball.velY *= -1; 
+            }
+
+            ball.x = canvas_center - square_radius - ball.radius; 
+
+           // console.log("left")
+
+          } else if(previousX >= canvas_center + square_radius){
+            // box right boundary
+            if(Math.random() < 0.5){
+              ball.velY *= -1; 
+            }
+            
+            ball.x = canvas_center + square_radius + ball.radius; 
+
+            //console.log("right")
+          }
+        
+
+          /*
+          // starburst shape - semi ideal 
+          if(ball.y + ball.radius <= canvas_center) {
+            ball.velY *= -1;
+            console.log("top");
+          } else {
+            console.log("bottom")
+          }
+
+           // if it hits the left half of the stimulus square, the x velocity should be negative 
+           if (ball.x + ball.radius <= canvas_center) {
+            // left 
+            ball.velX *= -1;
+            console.log("left"); 
+          } else {
+            console.log("right" + "\n"); 
+          }
+          */
+
+
+
+
 
         }
+
+
 
         // reset insignificant amounts to 0
         if (ball.velX < 0.01 && ball.velX > -0.01) {

@@ -67,7 +67,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
       ball_velocity_squared: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Ball velocity squared',
-        default: 25,
+        default: 15,
         description: 'The squared velocity of how fast the ball should move'
       },
 
@@ -126,7 +126,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
     // ball variables
     var ball;
-    var velocity_squared = 25;
+    var velocity_squared = trial.ball_velocity_squared;
 
     // mouse variables 
     var canvas_pos = getPosition(canvas);
@@ -152,11 +152,11 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
           audio = context.createBufferSource();
           audio.buffer = buffer;
           audio.connect(context.destination);
-          console.log("used if");
+          //console.log("used if");
         } else {
           audio = buffer;
           audio.currentTime = 0;
-          console.log("used else");
+          //console.log("used else");
 
         }
 
@@ -176,11 +176,11 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
           audio2 = context2.createBufferSource();
           audio2.buffer = buffer;
           audio2.connect(context2.destination);
-          console.log("used if 2");
+          // console.log("used if 2");
         } else {
           audio2 = buffer;
           audio2.currentTime = 0;
-          console.log("used else 2");
+          //console.log("used else 2");
 
         }
 
@@ -398,7 +398,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
       if (typeof response_info == 'undefined') {
         //record key pressed 
         keys_pressed.push('null');
-        console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: null");
+        //console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: null");
 
         // calculate and record null reponse time 
         rt.push("null");
@@ -406,7 +406,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
       } else {
         // record key pressed 
         keys_pressed.push(response_info.key);
-        console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: " + response_info.key);
+        //console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: " + response_info.key);
 
         // calculate and record response time 
         rt.push(sub_trial_end_frame - sub_trial_start_frame);
@@ -416,17 +416,17 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
       if (typeof response_info == 'undefined') {
         // missed response 
         is_correct = false;
-        console.log("Miss");
+       // console.log("Miss");
         accuracy.push("miss");
       } else if (stimulus[current_trial_number - 1] == response_info.key) {
         // correct response
         is_correct = true;
-        console.log("Correct!");
+       // console.log("Correct!");
         accuracy.push("true")
       } else {
         // incorrect response 
         is_correct = false;
-        console.log("Wrong :(");
+       // console.log("Wrong :(");
         accuracy.push("false");
       }
 
@@ -444,14 +444,14 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
      */
     function show_visual_stimulus() {
 
-      console.log("show_visual_stimulus called");
+     // console.log("show_visual_stimulus called");
 
       /**
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
       function init() {
-        console.log("init audio called")
-        console.log("Duration: " + duration);
+       // console.log("init audio called")
+       // console.log("Duration: " + duration);
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {
@@ -461,7 +461,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
         // shuffle stimulus and delay durations 
         shuffle(stimulus);
-        console.log("Stimulus order: " + stimulus);
+       // console.log("Stimulus order: " + stimulus);
         shuffle(delay_durations);
 
 
@@ -472,7 +472,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
         // record the start time 
         start_time = Date.now();
-        console.log("start time: " + start_time);
+      //  console.log("start time: " + start_time);
 
         //start the mouse event listener 
         canvas.addEventListener("mousemove", setMousePosition, false);
@@ -566,7 +566,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
         // check for end of trial 
         if (current_time - start_time > duration) {
-          console.log("time to end");
+        //  console.log("time to end");
 
           console.log("Loop Duration: " + (current_time - start_time));
           //clear the html display 
@@ -610,6 +610,10 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
             toPrint += i + 1 + ' ' + stimulus_start[i] + ' ' + feedback_start[i] + ' ' + delay_start[i] + '\n';
             toPrintFrames += i + 1 + ' ' + f_stimulus_start[i] + ' ' + f_feedback_start[i] + ' ' + f_delay_start[i] + '\n';
           }
+
+          trial_data.millisecond_timing = toPrint; 
+          trial_data.frames_timing = toPrintFrames;  
+
           console.log("Times in ms");
           console.log(toPrint);
           console.log("Times in frames");
@@ -668,11 +672,27 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
             //play the correct sound 
             if (stimulus[current_trial_number] == 'arrowup') {
-              audio.play();
+              if (context !== null) {
+                aud_start_time = context.currentTime;
+                audio.start(aud_start_time);
+               // console.log("play sound used if")
+              } else {
+
+                audio.play();
+               // console.log("play sound used else")
+              }
 
             } else if (stimulus[current_trial_number] == 'arrowdown') {
 
-              audio2.play();
+              if (context2 !== null) {
+                aud_start_time = context2.currentTime;
+                audio2.start(aud_start_time);
+                //console.log("play sound 2 used if")
+              } else {
+
+                audio2.play();
+                //console.log("play sound 2 used else")
+              }
 
             } else {
               console.log("stimulus was undefined");
@@ -704,7 +724,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
 
             delay_start.push(current_time - start_time);
             f_delay_start.push(number_of_refreshes);
-            
+
             if (current_trial_number > delay_durations.length) {
               last_marker += 600; // add 10 seconds 
             } else {
@@ -793,16 +813,47 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
           // console.log(ball.velX + ", " + ball.velY);
 
 
-          // if it hits to top half of the stimulus square, the y velocity should be negative
-          if (ball.y + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
-            // down ways 
-            ball.velY *= -1;
-          }
+          if(previousY <= canvas_center - square_radius){
+            //top boundary
+            ball.velY *= -1; 
+            if(Math.random() < 0.5){
+              ball.velX *= -1;
+            }
 
-          // if it hits the bottom half of the stimulus square, the x velocity should be negative 
-          if (ball.x + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
-            ball.velX *= -1;
+            ball.y = canvas_center - square_radius - ball.radius; 
+
+            //console.log("top")
+          } else if(previousY >= canvas_center + square_radius){
+            //bottom boundary
+            if(Math.random() < 0.5){
+              ball.velX *= -1;
+            }
+
+            ball.y = canvas_center + square_radius + ball.radius; 
+
+            //console.log("bottom")
+          } else if(previousX <= canvas_center - square_radius){
+            // box left boundary
+            ball.velX *= -1; 
+            if(Math.random() < 0.5){
+              ball.velY *= -1; 
+            }
+
+            ball.x = canvas_center - square_radius - ball.radius; 
+
+           // console.log("left")
+
+          } else if(previousX >= canvas_center + square_radius){
+            // box right boundary
+            if(Math.random() < 0.5){
+              ball.velY *= -1; 
+            }
+            
+            ball.x = canvas_center + square_radius + ball.radius; 
+
+            //console.log("right")
           }
+        
 
         }
 

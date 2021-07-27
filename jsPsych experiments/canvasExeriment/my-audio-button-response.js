@@ -105,9 +105,11 @@ jsPsych.plugins["my-audio-button-response"] = (function () {
           audio = context.createBufferSource();
           audio.buffer = buffer;
           audio.connect(context.destination);
+          //console.log("used if"); 
         } else {
           audio = buffer;
           audio.currentTime = 0;
+          //console.log("used else"); 
         }
         setupTrial();
       })
@@ -187,8 +189,10 @@ jsPsych.plugins["my-audio-button-response"] = (function () {
       if (context !== null) {
         startTime = context.currentTime;
         audio.start(startTime);
+        //console.log("start audio used if")
       } else {
         audio.play();
+        //console.log("start audio used else")
       }
 
       // end trial if time limit is set

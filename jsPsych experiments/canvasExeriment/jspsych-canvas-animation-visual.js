@@ -47,7 +47,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
       ball_velocity_squared: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Ball velocity squared',
-        default: 25,
+        default: 15,
         description: 'The squared velocity of how fast the ball should move'
       },
 
@@ -112,7 +112,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
 
     // ball variables
     var ball;
-    var velocity_squared = 25;
+    var velocity_squared = trial.ball_velocity_squared;
 
     // mouse variables 
     var canvas_pos = getPosition(canvas);
@@ -340,7 +340,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
       if (typeof response_info == 'undefined') {
         //record key pressed 
         keys_pressed.push('null');
-        console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: null");
+        //("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: null");
 
         // calculate and record null reponse time 
         rt.push("null");
@@ -348,7 +348,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
       } else {
         // record key pressed 
         keys_pressed.push(response_info.key);
-        console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: " + response_info.key);
+       // console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: " + response_info.key);
 
         // calculate and record response time 
         rt.push(sub_trial_end_frame - sub_trial_start_frame);
@@ -358,17 +358,17 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
       if (typeof response_info == 'undefined') {
         // missed response 
         is_correct = false;
-        console.log("Miss");
+        //console.log("Miss");
         accuracy.push("miss");
       } else if (stimulus[current_trial_number - 1] == response_info.key) {
         // correct response
         is_correct = true;
-        console.log("Correct!");
+        //console.log("Correct!");
         accuracy.push("true")
       } else {
         // incorrect response 
         is_correct = false;
-        console.log("Wrong :(");
+        //console.log("Wrong :(");
         accuracy.push("false");
       }
 
@@ -386,13 +386,13 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
      */
     function show_visual_stimulus() {
 
-      console.log("show_visual_stimulus called");
+     // console.log("show_visual_stimulus called");
 
       /**
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
       function init() {
-        console.log("init visual was called ")
+       // console.log("init visual was called ")
 
 
         // set up stimulus 
@@ -403,7 +403,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
 
         // shuffle stimulus and delay durations 
         shuffle(stimulus);
-        console.log("Stimulus order: " + stimulus);
+        //console.log("Stimulus order: " + stimulus);
         shuffle(delay_durations);
 
 
@@ -538,7 +538,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
 
         // check for end of trial 
         if (current_time - start_time > duration) {
-          console.log("time to end");
+         // console.log("time to end");
           console.log("Loop Duration: " + (current_time - start_time));
           //clear the html display 
           display_element.innerHTML = "";
@@ -579,11 +579,15 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
           // timing data to collect 
           let toPrint = '';
           let toPrintFrames = '';
-          console.log("Dual Visual");
+          console.log("Single Visual");
           for (let i = 0; i < stimulus_start.length; i++) {
             toPrint += i + 1 + ' ' + stimulus_start[i] + ' ' + stimulus_end[i] + ' ' + feedback_start[i] + ' ' + delay_start[i] + '\n';
             toPrintFrames += i + 1 + ' ' + f_stimulus_start[i] + ' ' + f_stimulus_end[i] + ' ' + f_feedback_start[i] + ' ' + f_delay_start[i] + '\n';
           }
+
+          trial_data.millisecond_timing = toPrint; 
+          trial_data.frames_timing = toPrintFrames; 
+
           console.log("Times in ms");
           console.log(toPrint);
           console.log("Times in frames");
@@ -618,7 +622,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
           after_response_called = false;
           // if it is the first frame being shown, include hte begninning delay 
           if (counter == 0) {
-            console.log("Starting frame: " + number_of_refreshes);
+           // console.log("Starting frame: " + number_of_refreshes);
             last_marker = number_of_refreshes + 600; // beginning delay, 5 seconds 
             is_stimulus = false;
             counter++;
@@ -763,16 +767,47 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
           ball.velX = Math.sqrt(velocity_squared - Math.pow(ball.velY, 2));
 
 
-          // if it hits to top half of the stimulus square, the y velocity should be negative
-          if (ball.y + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
-            // down ways 
-            ball.velY *= -1;
-          }
+          if(previousY <= canvas_center - square_radius){
+            //top boundary
+            ball.velY *= -1; 
+            if(Math.random() < 0.5){
+              ball.velX *= -1;
+            }
 
-          // if it hits the bottom half of the stimulus square, the x velocity should be negative 
-          if (ball.x + ball.radius <= canvas_center + square_radius * Math.sqrt(2)) {
-            ball.velX *= -1;
+            ball.y = canvas_center - square_radius - ball.radius; 
+
+            //console.log("top")
+          } else if(previousY >= canvas_center + square_radius){
+            //bottom boundary
+            if(Math.random() < 0.5){
+              ball.velX *= -1;
+            }
+
+            ball.y = canvas_center + square_radius + ball.radius; 
+
+            //console.log("bottom")
+          } else if(previousX <= canvas_center - square_radius){
+            // box left boundary
+            ball.velX *= -1; 
+            if(Math.random() < 0.5){
+              ball.velY *= -1; 
+            }
+
+            ball.x = canvas_center - square_radius - ball.radius; 
+
+           // console.log("left")
+
+          } else if(previousX >= canvas_center + square_radius){
+            // box right boundary
+            if(Math.random() < 0.5){
+              ball.velY *= -1; 
+            }
+            
+            ball.x = canvas_center + square_radius + ball.radius; 
+
+            //console.log("right")
           }
+        
 
         }
 
