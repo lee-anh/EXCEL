@@ -384,7 +384,7 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
       function init() {
-        console.log("init tracking was called ")
+        //console.log("init tracking was called ")
 
 
         /*
@@ -536,8 +536,8 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
 
         // check for end of trial 
         if (current_time - start_time > duration) {
-          console.log("time to end");
-          console.log("Loop Duration: " + (current_time - start_time));
+          //console.log("time to end");
+          //console.log("Loop Duration: " + (current_time - start_time));
           //clear the html display 
           display_element.innerHTML = "";
           ctx = null;
@@ -545,19 +545,26 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
           //window.cancelAnimationFrame(update); 
 
           // write trial data 
+          /*
           trial_data.mouseX = JSON.stringify(mouse_position_x);
           trial_data.mouseY = JSON.stringify(mouse_position_y);
           trial_data.mouse_length = mouse_position_x.length;
           trial_data.ballX = JSON.stringify(ball_position_x);
           trial_data.ballY = JSON.stringify(ball_position_y);
           trial_data.ball_length = ball_position_x.length;
-          /*
+        
           trial_data.keys_pressed = JSON.stringify(keys_pressed);
           trial_data.accuracy = JSON.stringify(accuracy);
           trial_data.response_times = JSON.stringify(rt);
           */
+         // calculate error
+         let mouse_string = ''; 
+         for (let i = 0; i < mouse_position_x.length; i++) {
+           mouse_string += Math.sqrt((mouse_position_x[i] - ball_position_x[i]) ** 2 + (mouse_position_y[i] - ball_position_y[i]) ** 2) + ' ';
+         }
           trial_data.my_time = current_time - start_time;
           trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
+          trial_data.mouse_error = mouse_string;
 
 
           // display trial data 
@@ -574,8 +581,8 @@ jsPsych.plugins["canvas-animation-tracking"] = (function () {
         if (number_of_refreshes % trial.mouse_sampling_rate == 0) {
           mouse_position_x.push(mouseX);
           mouse_position_y.push(mouseY);
-          ball_position_x.push(ball.x);
-          ball_position_y.push(ball.y);
+          ball_position_x.push(Math.round(ball.x));
+          ball_position_y.push(Math.round(ball.y));
         }
 
         /*

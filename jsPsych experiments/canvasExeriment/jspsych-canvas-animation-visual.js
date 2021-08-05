@@ -58,12 +58,19 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
         default: 180000,
         description: 'How long the trial should last in milliseconds.'
       },
-
-      stimulus_duration: {
+      
+      high_stimulus_duration: {
         type: jsPsych.plugins.parameterType.INT,
-        pretty_name: 'Stimulus duration',
+        pretty_name: 'High stimulus duration',
         default: 30,
-        description: 'How long the stimulus should be shown, in frames per second.'
+        description: 'How long the higher/up stimulus should be shown, in frames per second.'
+      },
+
+      low_stimulus_duration: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Low stimulus duration',
+        default: 30,
+        description: 'How long the lower/down stimulus should be shown, in frames per second.'
       },
 
       stimulus_max_response_time: {
@@ -329,9 +336,19 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
 
       // update last_marker with feedback time 
       last_marker = number_of_refreshes + trial.feedback_duration;
+
+      // TODO: potentially might have to change this to true and in an if statement if you want the stimulus to still show
       is_stimulus = false;
       sub_trial_switch = 0; // time for the delay 
 
+
+      
+      // stimulus wasn't done showing, but a key response was given. 
+      if(stimulus_end.length < current_trial_number){
+        stimulus_end.push(Date.now() - start_time); 
+        f_stimulus_end.push(number_of_refreshes); 
+      }
+    
 
       feedback_start.push(Date.now() - start_time);
       f_feedback_start.push(number_of_refreshes);
@@ -351,7 +368,10 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
        // console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: " + response_info.key);
 
         // calculate and record response time 
-        rt.push(sub_trial_end_frame - sub_trial_start_frame);
+        // rt.push(sub_trial_end_frame - sub_trial_start_frame); // in frames
+        rt.push(feedback_start[current_trial_number - 1] - stimulus_start[current_trial_number - 1]); // in ms 
+
+
       }
 
       // check for correct response 
@@ -539,7 +559,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
         // check for end of trial 
         if (current_time - start_time > duration) {
          // console.log("time to end");
-          console.log("Loop Duration: " + (current_time - start_time));
+          //console.log("Loop Duration: " + (current_time - start_time));
           //clear the html display 
           display_element.innerHTML = "";
           ctx = null;
@@ -549,41 +569,35 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
           //window.cancelAnimationFrame(update); 
 
           // write trial data 
-          /*
-          trial_data.mouseX = JSON.stringify(mouse_position_x);
-          trial_data.mouseY = JSON.stringify(mouse_position_y);
-          trial_data.mouse_length = mouse_position_x.length;
-          trial_data.ballX = JSON.stringify(ball_position_x);
-          trial_data.ballY = JSON.stringify(ball_position_y);
-          trial_data.ball_length = ball_position_x.length;
+        
+          // for arrays with length 16 (or number of trials)
+         // let keys_pressed_string = ''; 
+          let accuracy_rt_string = '';  
 
-          for (let i = 0; i < mouse_position_x.length; i++) {
-            mouse_error.push(Math.sqrt((mouse_position_x[i] - ball_position_x[i]) ** 2 + (mouse_position_y[i] - ball_position_y[i]) ** 2));
+          for (let i = 0; i < keys_pressed.length; i++){
+           // keys_pressed_string += keys_pressed[i] + ' '; 
+            accuracy_rt_string += accuracy[i] + ' ' + rt [i] + ' '; 
+
           }
-          trial_data.mouse_error = JSON.stringify(mouse_error);
-          trial_data.mouse_after_onset = JSON.stringify(after_onset);
-          trial_data.mouse_after_onset_length = after_onset.length; 
-          
-          */
-          trial_data.keys_pressed = JSON.stringify(keys_pressed);
-          trial_data.accuracy = JSON.stringify(accuracy);
-          trial_data.stimuli_onsets_in_ms = JSON.stringify(stimulus_start);
-          trial_data.stimuli_onsets_in_frames = JSON.stringify(f_stimulus_start);
-          trial_data.response_times = JSON.stringify(rt);
-          trial_data.my_time = current_time - start_time;
-          trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
-
-
-
 
           // timing data to collect 
           let toPrint = '';
           let toPrintFrames = '';
-          console.log("Single Visual");
+
           for (let i = 0; i < stimulus_start.length; i++) {
             toPrint += i + 1 + ' ' + stimulus_start[i] + ' ' + stimulus_end[i] + ' ' + feedback_start[i] + ' ' + delay_start[i] + '\n';
             toPrintFrames += i + 1 + ' ' + f_stimulus_start[i] + ' ' + f_stimulus_end[i] + ' ' + f_feedback_start[i] + ' ' + f_delay_start[i] + '\n';
           }
+
+          // Record trial data 
+          // accuracy, rt, accuracy, rt 
+          trial_data.my_time = current_time - start_time;
+          trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
+
+          
+          //trial_data.keys_pressed = keys_pressed_string; 
+          trial_data.accuracy_rt = accuracy_rt_string; 
+
 
           trial_data.millisecond_timing = toPrint; 
           trial_data.frames_timing = toPrintFrames; 
@@ -593,7 +607,7 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
           console.log("Times in frames");
           console.log(toPrintFrames);
 
-          // display trial data 
+          // send trial data 
           jsPsych.finishTrial(trial_data);
 
           return;
@@ -607,10 +621,10 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
         if (number_of_refreshes % trial.mouse_sampling_rate == 0) {
           mouse_position_x.push(mouseX);
           mouse_position_y.push(mouseY);
-          ball_position_x.push(ball.x);
-          ball_position_y.push(ball.y);
+          ball_position_x.push(Math.round(ball.x));
+          ball_position_y.push(Math.round(ball.y));
           if (sub_after_onset.length < 40) {
-            sub_after_onset.push(Math.sqrt((mouseX - ball.x) ** 2 + (mouseY - ball.y) ** 2));
+            sub_after_onset.push(Math.sqrt((mouseX - Math.round(ball.x)) ** 2 + (mouseY - Math.round(ball.y)) ** 2));
           } 
         }
 
@@ -630,8 +644,15 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
 
             // time to show the stimulus 
           } else if (sub_trial_switch == 1 && current_trial_number < trial.num_sub_trials * 2) {
-            // this is where we would differentiate timing 
-            last_marker = number_of_refreshes + trial.stimulus_duration;
+         
+           //  last_marker = number_of_refreshes + trial.stimulus_duration;
+
+           // differentiate timing based on high/low stimulus 
+           if(stimulus[current_trial_number] == 'arrowup'){
+            last_marker = number_of_refreshes + trial.high_stimulus_duration;
+          } else {
+            last_marker = number_of_refreshes + trial.low_stimulus_duration; 
+          }
 
             // push and clear the sub onset array 
             if(current_trial_number > 0 ){
@@ -665,7 +686,13 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
 
             // determine if it is still within the response time or rt is maxxed 
             if (is_rt == true) {
-              last_marker = number_of_refreshes + trial.stimulus_max_response_time;
+              //last_marker = number_of_refreshes + trial.stimulus_max_response_time;
+               // adjust response time so total stimlus + response is 2 seconds (120 frames)
+               if(stimulus[current_trial_number - 1] == 'arrowup'){
+                last_marker = number_of_refreshes + (120 - trial.high_stimulus_duration); 
+              } else {
+                last_marker = number_of_refreshes + (120 - trial.low_stimulus_duration); 
+              }
               is_rt = false;
               stimulus_end.push(current_time - start_time);
               f_stimulus_end.push(number_of_refreshes);

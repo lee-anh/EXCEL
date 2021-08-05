@@ -568,7 +568,7 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
         if (current_time - start_time > duration) {
         //  console.log("time to end");
 
-          console.log("Loop Duration: " + (current_time - start_time));
+          //console.log("Loop Duration: " + (current_time - start_time));
           //clear the html display 
           display_element.innerHTML = "";
           ctx = null;
@@ -579,28 +579,44 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
           //window.cancelAnimationFrame(update); 
 
           // write trial data 
+          /*
           trial_data.mouseX = JSON.stringify(mouse_position_x);
           trial_data.mouseY = JSON.stringify(mouse_position_y);
           trial_data.mouse_length = mouse_position_x.length;
           trial_data.ballX = JSON.stringify(ball_position_x);
           trial_data.ballY = JSON.stringify(ball_position_y);
           trial_data.ball_length = ball_position_x.length;
+          */
 
+          let mouse_string = ''; 
           for (let i = 0; i < mouse_position_x.length; i++) {
-            mouse_error.push(Math.sqrt((mouse_position_x[i] - ball_position_x[i]) ** 2 + (mouse_position_y[i] - ball_position_y[i]) ** 2));
+            mouse_string += Math.sqrt((mouse_position_x[i] - ball_position_x[i]) ** 2 + (mouse_position_y[i] - ball_position_y[i]) ** 2) + ' ';
           }
-          trial_data.mouse_error = JSON.stringify(mouse_error);
+
+         
+          /*
           trial_data.mouse_after_onset = JSON.stringify(after_onset);
           trial_data.mouse_after_onset_length = after_onset.length;
 
+          
           trial_data.keys_pressed = JSON.stringify(keys_pressed);
           trial_data.accuracy = JSON.stringify(accuracy);
           trial_data.stimuli_onsets_in_ms = JSON.stringify(stimulus_start);
           trial_data.stimuli_onsets_in_frames = JSON.stringify(f_stimulus_start);
           trial_data.response_times = JSON.stringify(rt);
-          trial_data.my_time = current_time - start_time;
-          trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
+          */
 
+          let data_string = ''; 
+          for(let i = 0; i < accuracy.length; i++){
+            // accuracy, response time, 40 error 
+            data_string += accuracy[i] + ' ' + rt[i] + ' '; 
+            // concatenate the 40 error data points 
+            for(let j = 0; j < after_onset[i].length; j++){
+              data_string += after_onset[i][j] + ' '; 
+            }
+          }
+
+          
 
           // timing data to collect 
           let toPrint = '';
@@ -610,6 +626,12 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
             toPrint += i + 1 + ' ' + stimulus_start[i] + ' ' + feedback_start[i] + ' ' + delay_start[i] + '\n';
             toPrintFrames += i + 1 + ' ' + f_stimulus_start[i] + ' ' + f_feedback_start[i] + ' ' + f_delay_start[i] + '\n';
           }
+
+          trial_data.data_string = data_string; 
+          trial_data.mouse_error = mouse_string;
+
+          trial_data.my_time = current_time - start_time;
+          trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
 
           trial_data.millisecond_timing = toPrint; 
           trial_data.frames_timing = toPrintFrames;  
@@ -633,10 +655,10 @@ jsPsych.plugins["canvas-animation-tracking-audio"] = (function () {
         if (number_of_refreshes % trial.mouse_sampling_rate == 0) {
           mouse_position_x.push(mouseX);
           mouse_position_y.push(mouseY);
-          ball_position_x.push(ball.x);
-          ball_position_y.push(ball.y);
+          ball_position_x.push(Math.round(ball.x));
+          ball_position_y.push(Math.round(ball.y));
           if (sub_after_onset.length < 40) {
-            sub_after_onset.push(Math.sqrt((mouseX - ball.x) ** 2 + (mouseY - ball.y) ** 2));
+            sub_after_onset.push(Math.sqrt((mouseX - Math.round(ball.x)) ** 2 + (mouseY - Math.round(ball.y)) ** 2));
           }
         }
 

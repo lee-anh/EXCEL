@@ -54,6 +54,14 @@
     // number of sub trials 
     var num_s_trials = 8;
 
+    // tones files
+    var up_tone = 'aud/E5_183ms.wav';
+    var down_tone = 'aud/C5_433ms.wav'; 
+
+    // speech files
+    var up_speech = 'aud/up183ms.wav'; 
+    var down_speech = 'aud/down433ms.wav'; 
+
     var instructions = {
         type: 'instructions',
         pages: ['Welcome!', '<p>This experiment has 7 modules. Each module is 3 minutes and is followed by a short survey to measure your perceived workload.</p> <p> Click the next button to start</p>'],
@@ -68,28 +76,28 @@
 
     var audio_alert_high = {
         type: 'my-audio-button-response',
-        stimulus: 'aud/E5.wav',
+        stimulus: up_tone,
         choices: ['Continue'],
         prompt: '<p>When you hear this HIGHER sound, press the UP arrow on the keyboard</p>'
     }
 
     var audio_alert_low = {
         type: 'my-audio-button-response',
-        stimulus: 'aud/C5.wav',
+        stimulus: down_tone,
         choices: ['Continue'],
         prompt: '<p>When you hear this LOWER sound, press the DOWN arrow on the keyboard</p>'
     }
 
     var speech_alert_high = {
         type: 'my-audio-button-response',
-        stimulus: 'aud/up.wav',
+        stimulus: up_speech,
         choices: ['Continue'],
         prompt: '<p>When you hear the word \"UP\", press the UP arrow on the keyboard</p>'
     }
 
     var speech_alert_low = {
         type: 'my-audio-button-response',
-        stimulus: 'aud/down.wav',
+        stimulus: down_speech,
         choices: ['Continue'],
         prompt: '<p>When you hear the word \"DOWN\" press the DOWN arrow on the keyboard</p>'
     }
@@ -256,7 +264,8 @@
         canvas_size: [c_size, c_size],
         choices: ['arrowup', 'arrowdown'],
         trial_duration: t_duration,
-        stimulus_duration: 30,
+        high_stimulus_duration: 11,
+        low_stimulus_duration: 26, 
         stimulus_max_response_time: 90,
         feedback_duration: fb_duration,
         num_sub_trials: num_s_trials, 
@@ -268,8 +277,8 @@
         type: 'canvas-animation-audio',
         canvas_size: [c_size, c_size],
         choices: ['arrowup', 'arrowdown'],
-        high_stimulus: 'aud/E5.wav',
-        low_stimulus: 'aud/C5.wav',
+        high_stimulus: up_tone,
+        low_stimulus: down_tone,
         trial_duration: t_duration,
         stimulus_duration: 30,
         stimulus_max_response_time: 120,
@@ -281,8 +290,8 @@
         type: 'canvas-animation-audio',
         canvas_size: [c_size, c_size],
         choices: ['arrowup', 'arrowdown'],
-        high_stimulus: 'aud/up.wav',
-        low_stimulus: 'aud/down.wav',
+        high_stimulus: up_speech,
+        low_stimulus: down_speech,
         trial_duration: t_duration,
         stimulus_duration: 30,
         stimulus_max_response_time: 120,
@@ -294,7 +303,7 @@
     var single_task_tracking = {
         type: 'canvas-animation-tracking',
         canvas_size: [c_size, c_size],
-        ball_velocity_squared: 35, //ball_v_sq,
+        ball_velocity_squared: ball_v_sq,
         trial_duration: t_duration,
         mouse_sampling_rate: 3,
         num_sub_trials: num_s_trials
@@ -305,8 +314,8 @@
         type: 'canvas-animation-tracking-audio',
         canvas_size: [c_size, c_size],
         choices: ['arrowup', 'arrowdown'],
-        high_stimulus: 'aud/E5.wav',
-        low_stimulus: 'aud/C5.wav',
+        high_stimulus: up_tone,
+        low_stimulus: down_tone,
         trial_duration: t_duration,
         stimulus_max_response_time: 120,
         feedback_duration: fb_duration,
@@ -320,8 +329,8 @@
         type: 'canvas-animation-tracking-audio',
         canvas_size: [c_size, c_size],
         choices: ['arrowup', 'arrowdown'],
-        high_stimulus: 'aud/up.wav',
-        low_stimulus: 'aud/down.wav',
+        high_stimulus: up_speech,
+        low_stimulus: down_speech,
         trial_duration: t_duration,
         stimulus_max_response_time: 120,
         feedback_duration: fb_duration,
@@ -337,7 +346,8 @@
         canvas_size: [c_size, c_size],
         choices: ['arrowup', 'arrowdown'],
         trial_duration: t_duration,
-        stimulus_duration: 30,
+        high_stimulus_duration: 11,
+        low_stimulus_duration: 26, 
         stimulus_max_response_time: 90,
         feedback_duration: fb_duration,
         mouse_sampling_rate: 3,
@@ -621,20 +631,22 @@
         // use html audio so you can play sounds multiple times
         use_webaudio:false, 
 
-        //timeline: [instructions, preload, single_trials, dual_trials],
-         timeline: [single_task_tracking], 
+         timeline: [instructions, preload, single_trials, dual_trials],
+        // timeline: [single_task_tracking], 
         // timeline: [instructions, preload, dual_task_visual_alerts_and_tracking_task, instructions, dual_task_audio_alert_speech_and_tracking_task], 
 
         // nasa tlx order
         //timeline: [nasa_tlx], 
-        //timeline: [single_tracking_trial], 
+        //timeline: [single_visual_trial], 
         // timeline: [instructions, audio_instructions, nasa_tlx],
         // do we want a progress bar?
          show_progress_bar: true,
          auto_update_progress_bar: false, 
 
         on_finish: function () {
+            //jsPsych.data.displayData('csv');
             jsPsych.data.displayData();
+
 
         }
     })
