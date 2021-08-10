@@ -1,7 +1,7 @@
 /**
  * jspsych-canvas-animation-audio
  * Claire Liu
- * plugin for a canvas that supports canvas animation and auditory alerts 
+ * plugin for a canvas that supports canvas animation and 2 kinds of auditory alerts 
  * 
  */
 
@@ -99,12 +99,8 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
         default: 50,
         description: 'How often (in frames) to sample the mouse and ball locations.'
       }
-
-
-
     }
   }
-
 
 
   plugin.trial = function (display_element, trial) {
@@ -151,20 +147,15 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
     // load audio file
     jsPsych.pluginAPI.getAudioBuffer(trial.high_stimulus)
       .then(function (buffer) {
-        //if not preloaded 
 
         if (context !== null) {
           audio = context.createBufferSource();
           audio.buffer = buffer;
           audio.connect(context.destination);
-          //console.log("used if");
-        } else {
 
-          //is preloaded?
+        } else {
           audio = buffer;
           audio.currentTime = 0;
-          //console.log("used else");
-
         }
 
       })
@@ -184,12 +175,10 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
           audio2 = context2.createBufferSource();
           audio2.buffer = buffer;
           audio2.connect(context2.destination);
-          // console.log("used if 2");
         } else {
 
           audio2 = buffer;
           audio2.currentTime = 0;
-          //console.log("used else 2");
 
         }
 
@@ -413,9 +402,8 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
       f_feedback_start.push(number_of_refreshes);
       // give feedback based on response info 
       if (typeof response_info == 'undefined') {
-        //record key pressed 
+        // record key pressed 
         keys_pressed.push('null');
-        //console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: null");
 
         // calculate and record null reponse time 
         rt.push("null");
@@ -423,27 +411,25 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
       } else {
         // record key pressed 
         keys_pressed.push(response_info.key);
-        //console.log("Sub-trial counter: " + current_trial_number + " Stimulus: " + stimulus[current_trial_number - 1] + ", response: " + response_info.key);
 
         // calculate and record response time 
-        rt.push(sub_trial_end_frame - sub_trial_start_frame);
+        //rt.push(sub_trial_end_frame - sub_trial_start_frame);
+        rt.push(feedback_start[current_trial_number - 1] - stimulus_start[current_trial_number - 1]); // in ms 
+
       }
 
       // check for correct response 
       if (typeof response_info == 'undefined') {
         // missed response 
         is_correct = false;
-       // console.log("Miss");
         accuracy.push("miss");
       } else if (stimulus[current_trial_number - 1] == response_info.key) {
         // correct response
         is_correct = true;
-       // console.log("Correct!");
         accuracy.push("true")
       } else {
         // incorrect response 
         is_correct = false;
-        //console.log("Wrong :(");
         accuracy.push("false");
       }
 
@@ -466,7 +452,6 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
        * runs once at the beginning, loads any data and kickstarts the loop 
        */
       function init() {
-       // console.log("init audio called");
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {
@@ -476,7 +461,6 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
         // shuffle stimulus and delay durations 
         shuffle(stimulus);
-       // console.log("Stimulus order: " + stimulus);
         shuffle(delay_durations);
 
 
@@ -487,7 +471,6 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
         // record the start time 
         start_time = Date.now();
-       // console.log("start time: " + start_time);
 
 
         //start the mouse event listener 
@@ -498,7 +481,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
         // generate random x and y components for the ball 
         var randomVelocityX = Math.random() * (Math.sqrt(velocity_squared) - 3) + 3; // chose 3 because it is larger than 2.739, which is √30/2
         var randomVelocityY = Math.sqrt(velocity_squared - Math.pow(randomVelocityX, 2));
-        // console.log("x: " + randomVelocityX + ", y: " + randomVelocityY);
+
 
         // starting objects for the ball 
         ball = {
@@ -526,32 +509,6 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
         // clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        /*
-        // draw the ball (only object in this scene)
-        ctx.beginPath();
-        ctx.fillStyle = 'black';
-        ctx.arc(
-          ball.x, ball.y,
-          ball.radius,
-          0, Math.PI * 2
-        )
-        ctx.fill();
-
-        // mouse tracker
-        // mouse tracker shows red, but if it is in contact with the ball, then it shows as green. 
-        ctx.fillStyle = "red";
-        var err_allowed = ball.radius * 2;
-        if (mouseX - ball.x <= err_allowed && mouseX - ball.x >= -err_allowed && mouseY - ball.y <= err_allowed && mouseY - ball.y >= -err_allowed) {
-          ctx.fillStyle = "green";
-        }
-
-        // rectangular mouse tracker
-        ctx.fillRect(mouseX - 30, mouseY - 30, 60, 60);
-
-        // circular mouse tracker
-        // ctx.arc(mouseX, mouseY, 30, 0, 2 * Math.PI, true);
-        // ctx.fill();
-        */
 
         // center square 
         ctx.fillStyle = '#cccccc';
@@ -586,68 +543,41 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
         // check for end of trial 
         if (current_time - start_time > duration) {
-         // console.log("time to end");
-          //console.log("Loop Duration: " + (current_time - start_time));
           //clear the html display 
           display_element.innerHTML = "";
           ctx = null;
 
           after_onset.push(sub_after_onset);
+          let accuracy_rt_string = '';
 
-
-          //window.cancelAnimationFrame(update); 
-
-          // write trial data 
-          /*
-          trial_data.mouseX = JSON.stringify(mouse_position_x);
-          trial_data.mouseY = JSON.stringify(mouse_position_y);
-          trial_data.mouse_length = mouse_position_x.length;
-          trial_data.ballX = JSON.stringify(ball_position_x);
-          trial_data.ballY = JSON.stringify(ball_position_y);
-          trial_data.ball_length = ball_position_x.length;
-          for (let i = 0; i < mouse_position_x.length; i++) {
-            mouse_error.push(Math.sqrt((mouse_position_x[i] - ball_position_x[i]) ** 2 + (mouse_position_y[i] - ball_position_y[i]) ** 2));
-          }
-          trial_data.mouse_error = JSON.stringify(mouse_error);
-          trial_data.mouse_after_onset = JSON.stringify(after_onset);
-          trial_data.mouse_after_onset_length = after_onset.length; 
-        */
-
-          //trial_data.keys_pressed = JSON.stringify(keys_pressed);
-          //trial_data.accuracy = JSON.stringify(accuracy);
-          //trial_data.stimuli_onsets_in_ms = JSON.stringify(stimulus_start);
-          //trial_data.stimuli_onsets_in_frames = JSON.stringify(f_stimulus_start);
-          //trial_data.response_times = JSON.stringify(rt); 
-         
-
-          let accuracy_rt_string = '';  
-
-          for (let i = 0; i < keys_pressed.length; i++){
-            accuracy_rt_string += accuracy[i] + ' ' + rt [i] + ' '; 
+          for (let i = 0; i < keys_pressed.length; i++) {
+            accuracy_rt_string += accuracy[i] + ' ' + rt[i] + ' ';
           }
 
           // timing data to collect 
           let toPrint = '';
           let toPrintFrames = '';
 
+          // concatenate timing data 
           for (let i = 0; i < stimulus_start.length; i++) {
             toPrint += i + 1 + ' ' + stimulus_start[i] + ' ' + feedback_start[i] + ' ' + delay_start[i] + '\n';
             toPrintFrames += i + 1 + ' ' + f_stimulus_start[i] + ' ' + f_feedback_start[i] + ' ' + f_delay_start[i] + '\n';
           }
-          
+
+          // write data to trial_data 
           trial_data.my_time = current_time - start_time;
           trial_data.total_number_of_refreshes = number_of_refreshes - starting_frame;
 
-          trial_data.accuracy_rt = accuracy_rt_string; 
+          trial_data.accuracy_rt = accuracy_rt_string;
 
-          trial_data.millisecond_timing = toPrint; 
-          trial_data.frames_timing = toPrintFrames; 
+          trial_data.millisecond_timing = toPrint;
+          trial_data.frames_timing = toPrintFrames;
 
           console.log("Times in ms");
           console.log(toPrint);
           console.log("Times in frames");
           console.log(toPrintFrames);
-        
+
 
           // send trial data 
           jsPsych.finishTrial(trial_data);
@@ -695,6 +625,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
             sub_trial_start_frame = number_of_refreshes;
             is_stimulus = true;
 
+            // record stimulus start time
             stimulus_start.push(current_time - start_time);
             f_stimulus_start.push(number_of_refreshes);
 
@@ -706,11 +637,9 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
               if (context !== null) {
                 aud_start_time = context.currentTime;
                 audio.start(aud_start_time);
-               // console.log("play sound used if")
               } else {
 
                 audio.play();
-                //console.log("play sound used else")
               }
 
 
@@ -719,11 +648,8 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
               if (context2 !== null) {
                 aud_start_time = context2.currentTime;
                 audio2.start(aud_start_time);
-                //console.log("play sound 2 used if")
               } else {
-
                 audio2.play();
-                //console.log("play sound 2 used else")
               }
 
 
@@ -787,7 +713,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
           // must have a negative Y velocity
           ball.velY = -(Math.sqrt(velocity_squared - Math.pow(ball.velX, 2)));
-          ball.y = canvas.height - ball.radius; // moves ball to correct position to prevent multiple refreshes 
+          ball.y = canvas.height - ball.radius; // moves ball to correct position to prevent unnecessary bounces
 
         }
 
@@ -801,7 +727,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
           // must have a postive Y velocity
           ball.velY = Math.sqrt(velocity_squared - Math.pow(ball.velX, 2));
 
-          ball.y = ball.radius; // moves ball to correct position to prevent multiple refreshes 
+          ball.y = ball.radius; // moves ball to correct position to prevent unnecessary bounces 
         }
 
         // left bound / right of stimulus box 
@@ -815,7 +741,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
           // must have a positve X velocity
           ball.velX = Math.sqrt(velocity_squared - Math.pow(ball.velY, 2));
 
-          ball.x = ball.radius;
+          ball.x = ball.radius; // moves ball to correct position to prevent unnecessary bounces
         }
 
         // right bound / left of stimulus box 
@@ -831,7 +757,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
           // must have a negative X velocity
           ball.velX = -(Math.sqrt(velocity_squared - Math.pow(ball.velY, 2)));
 
-          ball.x = canvas.width - ball.radius;
+          ball.x = canvas.width - ball.radius; // moves ball to correct position to prevent unnecessary bounces
         }
 
 
@@ -845,46 +771,41 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
           ball.velY = Math.random() * (Math.sqrt(velocity_squared) - 0.5) + 0.5;
           ball.velX = Math.sqrt(velocity_squared - Math.pow(ball.velY, 2));
 
-      
-          if(previousY <= canvas_center - square_radius){
+
+          if (previousY <= canvas_center - square_radius) {
             //top boundary
-            ball.velY *= -1; 
-            if(Math.random() < 0.5){
+            ball.velY *= -1;
+            if (Math.random() < 0.5) {
               ball.velX *= -1;
             }
 
-            ball.y = canvas_center - square_radius - ball.radius; 
+            ball.y = canvas_center - square_radius - ball.radius; // moves ball to correct position to prevent unnecessary bounces
 
-            //console.log("top")
-          } else if(previousY >= canvas_center + square_radius){
+          } else if (previousY >= canvas_center + square_radius) {
             //bottom boundary
-            if(Math.random() < 0.5){
+            if (Math.random() < 0.5) {
               ball.velX *= -1;
             }
 
-            ball.y = canvas_center + square_radius + ball.radius; 
+            ball.y = canvas_center + square_radius + ball.radius; // moves ball to correct position to prevent unnecessary bounces
 
-            //console.log("bottom")
-          } else if(previousX <= canvas_center - square_radius){
+          } else if (previousX <= canvas_center - square_radius) {
             // box left boundary
-            ball.velX *= -1; 
-            if(Math.random() < 0.5){
-              ball.velY *= -1; 
+            ball.velX *= -1;
+            if (Math.random() < 0.5) {
+              ball.velY *= -1;
             }
 
-            ball.x = canvas_center - square_radius - ball.radius; 
+            ball.x = canvas_center - square_radius - ball.radius; // moves ball to correct position to prevent unnecessary bounces
 
-           // console.log("left")
 
-          } else if(previousX >= canvas_center + square_radius){
+          } else if (previousX >= canvas_center + square_radius) {
             // box right boundary
-            if(Math.random() < 0.5){
-              ball.velY *= -1; 
+            if (Math.random() < 0.5) {
+              ball.velY *= -1;
             }
-            
-            ball.x = canvas_center + square_radius + ball.radius; 
 
-            //console.log("right")
+            ball.x = canvas_center + square_radius + ball.radius; // moves ball to correct position to prevent unnecessary bounces
           }
         }
 
