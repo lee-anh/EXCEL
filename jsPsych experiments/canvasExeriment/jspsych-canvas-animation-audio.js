@@ -455,8 +455,8 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {
-          stimulus.push('arrowup'); // "arrowup"
-          stimulus.push('arrowdown'); // "arrowdown"
+          stimulus.push(trial.choices[0]); // arrowup
+          stimulus.push(trial.choices[1]); // arrowdown
         }
 
         // shuffle stimulus and delay durations 
@@ -632,7 +632,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
             var aud_start_time = performance.now();
 
             //play the correct sound 
-            if (stimulus[current_trial_number] == 'arrowup') {
+            if (stimulus[current_trial_number] == trial.choices[0]) { // arrowup
 
               if (context !== null) {
                 aud_start_time = context.currentTime;
@@ -643,7 +643,7 @@ jsPsych.plugins["canvas-animation-audio"] = (function () {
               }
 
 
-            } else if (stimulus[current_trial_number] == 'arrowdown') {
+            } else if (stimulus[current_trial_number] == trial.choices[1]) { // arrowdown
 
               if (context2 !== null) {
                 aud_start_time = context2.currentTime;

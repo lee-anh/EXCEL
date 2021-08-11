@@ -404,8 +404,8 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
 
         // set up stimulus 
         for (let i = 0; i < trial.num_sub_trials; i++) {
-          stimulus.push(trial.choices[0]); // "arrowup"
-          stimulus.push(trial.choices[1]); // "arrowdown"
+          stimulus.push(trial.choices[0]); // arrowup
+          stimulus.push(trial.choices[1]); // arrowdown
         }
 
         // shuffle stimulus and delay durations 
@@ -497,7 +497,8 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
         // show the stimulus if it is time to
         ctx.fillStyle = 'black';
         if (is_stimulus == true) {
-          if (stimulus[current_trial_number - 1] == "arrowup") {
+
+          if (stimulus[current_trial_number - 1] == trial.choices[0]) { // up 
             // draw up arrow 
             ctx.fillRect(Math.ceil(canvas.width / 2 - 13), Math.ceil(canvas.width / 2 - 20), 27, 65);
 
@@ -508,7 +509,7 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
             ctx.lineTo(Math.ceil(canvas.width / 2 + 40), Math.ceil(canvas.width / 2 - 20));
             ctx.fill();
 
-          } else if (stimulus[current_trial_number - 1] == 'arrowdown') {
+          } else if (stimulus[current_trial_number - 1] == trial.choices[1]) { // down 
             // draw the down arrow
             ctx.fillStyle = 'black';
             ctx.fillRect(Math.ceil(canvas.width / 2 - 13), Math.ceil(canvas.width / 2 - 50), 27, 60);
@@ -626,7 +627,7 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
           } else if (sub_trial_switch == 1 && current_trial_number < trial.num_sub_trials * 2) {
 
             // differentiate timing based on high/low stimulus 
-            if (stimulus[current_trial_number] == 'arrowup') {
+            if (stimulus[current_trial_number] == trial.choices[0]) { // arrowup
               last_marker = number_of_refreshes + trial.high_stimulus_duration;
             } else {
               last_marker = number_of_refreshes + trial.low_stimulus_duration;
@@ -666,9 +667,9 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
             if (is_rt == true) {
 
               // adjust response time so total stimlus + response is 2 seconds (120 frames)
-              if (stimulus[current_trial_number - 1] == 'arrowup') {
+              if (stimulus[current_trial_number - 1] == trial.choices[0]) { // arrowup
                 last_marker = number_of_refreshes + (120 - trial.high_stimulus_duration);
-              } else {
+              } else { // arrowdown
                 last_marker = number_of_refreshes + (120 - trial.low_stimulus_duration);
               }
 

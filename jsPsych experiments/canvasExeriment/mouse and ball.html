@@ -9,6 +9,9 @@
     <script src="jspsych/plugins/jspsych-preload.js"></script>
     <script src="jspsych/plugins/jspsych-instructions.js"></script>
     <script src="jspsych/plugins/jspsych-survey-multi-choice.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-text.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-likert.js"></script>
+    <script src="jspsych/plugins/jspsych-fullscreen.js"></script>
 
     <script src="my-audio-button-response.js"></script>
     <script src="my-html-slider-response.js"></script>
@@ -40,7 +43,7 @@
     var timeline = [];
 
     // canvas size 
-    var c_size = 750;
+    var c_size = 600;
 
     // trial duration in milliseconds
     var t_duration = 180000;
@@ -49,7 +52,10 @@
     var fb_duration = 30;
 
     // ball velocity squared
-    var ball_v_sq = 15;
+    var ball_v_sq = 10;
+
+    // keyboard choices 
+    var kb_choices = ['w', 's']; 
 
     // number of sub trials 
     var num_s_trials = 8;
@@ -64,7 +70,6 @@
 
 
     // nasa tlx 
-    var mental_demand_count = 0;
 
     var instructions = {
         type: 'instructions',
@@ -82,28 +87,28 @@
         type: 'my-audio-button-response',
         stimulus: up_tone,
         choices: ['Continue'],
-        prompt: '<p>When you hear this HIGHER sound, press the UP arrow on the keyboard</p>'
+        prompt: '<p>When you hear this HIGHER sound, press the \"w\" key on the keyboard</p>'
     }
 
     var audio_alert_low = {
         type: 'my-audio-button-response',
         stimulus: down_tone,
         choices: ['Continue'],
-        prompt: '<p>When you hear this LOWER sound, press the DOWN arrow on the keyboard</p>'
+        prompt: '<p>When you hear this LOWER sound, press the \"s\" key on the keyboard</p>'
     }
 
     var speech_alert_high = {
         type: 'my-audio-button-response',
         stimulus: up_speech,
         choices: ['Continue'],
-        prompt: '<p>When you hear the word \"UP\", press the UP arrow on the keyboard</p>'
+        prompt: '<p>When you hear the word \"UP\", press \"w\" key on the keyboard</p>'
     }
 
     var speech_alert_low = {
         type: 'my-audio-button-response',
         stimulus: down_speech,
         choices: ['Continue'],
-        prompt: '<p>When you hear the word \"DOWN\" press the DOWN arrow on the keyboard</p>'
+        prompt: '<p>When you hear the word \"DOWN\" press \"s\" key on the keyboard</p>'
     }
 
     var visual_first_instruction = {
@@ -137,7 +142,7 @@
 
 
         },
-        prompt: '<p>When you see this icon in the center square of the screen, press the UP arrow on the keyboard</p>',
+        prompt: '<p>When you see this icon in the center square of the screen, press the \"w\" key on the keyboard</p>',
         canvas_size: [500, 500],
         choices: ['Continue']
     }
@@ -165,11 +170,8 @@
             ctx.lineTo(Math.ceil(canvas_width / 2 + 40), Math.ceil(canvas_width / 2 + 10));
             ctx.fill();
 
-
-
-
         },
-        prompt: '<p>When you see this icon in the center square of the screen, press the UP arrow on the keyboard</p>',
+        prompt: '<p>When you see this icon in the center square of the screen, press the \"s\" key on the keyboard</p>',
         canvas_size: [500, 500],
         choices: ['Continue']
     }
@@ -177,7 +179,7 @@
 
     var tracking_first_instruction = {
         type: 'my-html-button-response',
-        stimulus: '<p>In this run, you are asked to complete a visual tracking task: Trying to cover a moving circle with a square controlled by the mouse.</p>',
+        stimulus: '<p>In this module, you are asked to complete a visual tracking task: Trying to cover a moving circle with a square controlled by the mouse.</p>',
         choices: ['Continue']
     }
 
@@ -203,8 +205,6 @@
             // mouse tracker
             ctx.fillStyle = 'green';
             ctx.fillRect(40, 40, 60, 60);
-
-
 
 
         },
@@ -245,6 +245,24 @@
         choices: ['Continue']
     }
 
+    var dual_speech_audio_tracking_instructions = {
+        type: 'my-html-button-response', 
+        stimulus: '<p>In this module, you will complete the visual tracking task and you will be intermittenly interrupted with auditory interruptions.</p>', 
+        choices: ['Continue']
+    }
+
+    var dual_visual_tracking_instructions = {
+        type: 'my-html-button-response', 
+        stimulus: '<p>In this module, you will complete the visual tracking task and you will be intermittenly interrupted with visual icons in the square in the middle of your screen.</p>', 
+        choices: ['Continue']
+    }
+
+    var hand_position_instructions = {
+        type: 'my-html-button-response', 
+        stimulus: '<p> During the module, keep your left index finger on the \"w\" and \"s\" keys and your right hand on your trackpad/mouse.</p>',
+        choices: ['Continue']
+
+    }
 
 
     var last_instruction = {
@@ -266,7 +284,7 @@
     var single_task_visual_alerts = {
         type: 'canvas-animation-visual',
         canvas_size: [c_size, c_size],
-        choices: ['arrowup', 'arrowdown'],
+        choices: kb_choices,
         trial_duration: t_duration,
         high_stimulus_duration: 11,
         low_stimulus_duration: 26,
@@ -280,7 +298,7 @@
     var single_task_audio_alerts = {
         type: 'canvas-animation-audio',
         canvas_size: [c_size, c_size],
-        choices: ['arrowup', 'arrowdown'],
+        choices: kb_choices,
         high_stimulus: up_tone,
         low_stimulus: down_tone,
         trial_duration: t_duration,
@@ -293,7 +311,7 @@
     var single_task_speech_audio_alerts = {
         type: 'canvas-animation-audio',
         canvas_size: [c_size, c_size],
-        choices: ['arrowup', 'arrowdown'],
+        choices: kb_choices,
         high_stimulus: up_speech,
         low_stimulus: down_speech,
         trial_duration: t_duration,
@@ -317,7 +335,7 @@
     var dual_task_audio_alerts_and_tracking_task = {
         type: 'canvas-animation-tracking-audio',
         canvas_size: [c_size, c_size],
-        choices: ['arrowup', 'arrowdown'],
+        choices: kb_choices,
         high_stimulus: up_tone,
         low_stimulus: down_tone,
         trial_duration: t_duration,
@@ -332,7 +350,7 @@
     var dual_task_audio_alert_speech_and_tracking_task = {
         type: 'canvas-animation-tracking-audio',
         canvas_size: [c_size, c_size],
-        choices: ['arrowup', 'arrowdown'],
+        choices: kb_choices,
         high_stimulus: up_speech,
         low_stimulus: down_speech,
         trial_duration: t_duration,
@@ -348,7 +366,7 @@
     var dual_task_visual_alerts_and_tracking_task = {
         type: 'canvas-animation-tracking-visual',
         canvas_size: [c_size, c_size],
-        choices: ['arrowup', 'arrowdown'],
+        choices: kb_choices,
         trial_duration: t_duration,
         high_stimulus_duration: 11,
         low_stimulus_duration: 26,
@@ -432,7 +450,7 @@
         slider_width: 500,
         step: 5,
         require_movement: true,
-        prompt: '<p>How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed, and complacent did you feel during the task?</p><p><b>Frusteration</b></p>'
+        prompt: '<p>How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed, and complacent did you feel during the task?</p><p><b>Frustration</b></p>'
     }
 
     var weighting_prompt = "Select the factor that contributed more to workload for the task you completed."
@@ -539,76 +557,102 @@
         }
     }
 
+    // Demographic questions 
+    // TODO: Figure out how to make this into a response box
+    var demo_q1 =  {
+        type: 'survey-multi-choice', 
+        questions: [
+            {prompt: "Please select your gender:", name: "Q1", options: ["Female", "Male", "Prefer to self-describe", "Prefer not to respond"]}
+        ]
+    }
 
+    var demo_q2 = {
+        type: 'survey-text', 
+        questions: [
+            {prompt: "Please write your age:", name: 'Q2'}
+        ]
+    }
 
+    var demo_q3 = {
+        type: 'survey-multi-choice', 
+        questions: [
+            {prompt: "Which hand do you normally use to control a computer mouse?", name:'Q3', options: ["Right Hand", "Left Hand"]}
+        ]
+    }
 
+    var demo_q4_q5_q6 = {
+        type: 'survey-text', 
+        questions: [
+            {prompt: "How many years of experience do you have playing a musical instrument or singing? (Enter 0 if you have no experience playing a musical instrument.)", name: 'Q4'}, 
+            {prompt: "For how many years have you been able to read musical notation? (Enter 0 if you cannot read musical notation.)", name: 'Q5'}, 
+            {prompt: "How many years of formal musical training (including lessons, group or private instruction, and/or participation in bands, orchestras, or choirs) do you have? (Enter 0 if you have no formal training.)", name: 'Q6'}
+        ]
+    }
 
+    var demo_q7_q8 = {
+        type: 'survey-multi-choice', 
+        questions: [
+            {prompt: "Are you a music major?", name: 'Q7', options: ["Yes", "No"]}, 
+            {prompt: "Is English your first language?", name: 'Q8', options: ["Yes", "No"]}
+        ]
+    }
 
+    
+    var demo_q9_q10 = {
+        type:'survey-likert', 
+        questions:[
+            {prompt: "Please rate your musical ability.", name: 'Q9', labels: ['1 - I have no musical ability at all', '2', '3', '4', '5', '6', '7 - I am a professional musician']}, 
+            {prompt: "I followed the study instructions to the best of my ability for this entire experiment", name: 'Q10', labels: ['1 - Strongly disagree', '2', '3', '4', '5', '6', '7 - Strongly agree']}
+        ]
+    }
 
+    var demo_q11_q12 = {
+        type: 'survey-text', 
+        questions:[
+            {prompt: "Did you encounter any technical difficulties with the computer program in this study? If yes, please describe.", name: 'Q11'}, 
+            {prompt: "Do you have any additional comments about your experiences during this study?", name: 'Q12'}
+        ]
+
+    }
+
+    // organize trials 
 
     var nasa_tlx = {
-        timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frustration, nasa_tlx_weights_instructions, nasa_tlx_weights_1, nasa_tlx_weights_2, nasa_tlx_weights_3, nasa_tlx_weights_4, nasa_tlx_weights_5, nasa_tlx_weights_6, nasa_tlx_weights_7, nasa_tlx_weights_8, nasa_tlx_weights_9, nasa_tlx_weights_10, nasa_tlx_weights_11, nasa_tlx_weights_12, nasa_tlx_weights_13, nasa_tlx_weights_14, nasa_tlx_weights_15]
+        timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_physical_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frustration, nasa_tlx_weights_instructions, nasa_tlx_weights_1, nasa_tlx_weights_2, nasa_tlx_weights_3, nasa_tlx_weights_4, nasa_tlx_weights_5, nasa_tlx_weights_6, nasa_tlx_weights_7, nasa_tlx_weights_8, nasa_tlx_weights_9, nasa_tlx_weights_10, nasa_tlx_weights_11, nasa_tlx_weights_12, nasa_tlx_weights_13, nasa_tlx_weights_14, nasa_tlx_weights_15]
     }
+
+    var demographics = {
+        timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9_q10, demo_q11_q12]
+    }
+
     var audio_instructions = {
-        timeline: [audio_first_instruction, audio_alert_high, audio_alert_low]
+        timeline: [audio_first_instruction, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
 
     }
     var speech_instructions = {
-        timeline: [audio_first_instruction, speech_alert_high, speech_alert_low]
+        timeline: [audio_first_instruction, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
     }
 
     var visual_instructions = {
-        timeline: [visual_first_instruction, visual_alert_up, visual_alert_down]
+        timeline: [visual_first_instruction, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
     }
 
     var tracking_instructions = {
-        timeline: [tracking_first_instruction, tracking_touching, tracking_not_touching]
+        timeline: [tracking_first_instruction, tracking_touching, tracking_not_touching, hand_position_instructions, last_instruction]
     }
 
-
-
-
-
-
-
-
-    var single_audio_trial = {
-        timeline: [audio_instructions, last_instruction, single_task_audio_alerts, nasa_tlx]
+    var audio_tracking_instructions = {
+        timeline: [dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
     }
 
-    var single_speech_trial = {
-        timeline: [speech_instructions, last_instruction, single_task_speech_audio_alerts, nasa_tlx]
+    var speech_tracking_instructions = {
+        timeline: [dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
     }
 
-    var single_visual_trial = {
-        timeline: [visual_instructions, last_instruction, single_task_visual_alerts, nasa_tlx]
+    var visual_tracking_instructions = {
+        timeline: [dual_visual_tracking_instructions, tracking_touching, tracking_not_touching, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
     }
 
-    var single_tracking_trial = {
-        timeline: [tracking_instructions, last_instruction, single_task_tracking, nasa_tlx]
-    }
-
-    var single_trials = {
-        timeline: shuffle([single_audio_trial, single_speech_trial, single_visual_trial, single_tracking_trial])
-    }
-
-
-
-    var dual_audio_trial = {
-        timeline: [tracking_instructions, audio_instructions, dual_task_audio_alerts_and_tracking_task, nasa_tlx]
-    }
-
-    var dual_speech_trial = {
-        timeline: [tracking_instructions, speech_instructions, dual_task_audio_alert_speech_and_tracking_task, nasa_tlx]
-    }
-
-    var dual_visual_trial = {
-        timeline: [tracking_instructions, visual_instructions, dual_task_visual_alerts_and_tracking_task, nasa_tlx],
-    }
-
-    var dual_trials = {
-        timeline: shuffle([dual_audio_trial, dual_speech_trial, dual_visual_trial])
-    }
 
     /**
      * Fisher-Yates Algorithm for shuffling arrays
@@ -616,7 +660,7 @@
      * @param {array} array array to shuffle 
      * @returns {array} shuffled array 
      */
-    function shuffle(array) {
+     function shuffle(array) {
         var currentIndex = array.length, randomIndex;
 
         // While there remain elements to shuffle
@@ -636,19 +680,72 @@
     }
 
 
+    // Single Trials 
+    var single_audio_trial = {
+        timeline: [audio_instructions, single_task_audio_alerts, nasa_tlx]
+    }
+
+    var single_speech_trial = {
+        timeline: [speech_instructions,single_task_speech_audio_alerts, nasa_tlx]
+    }
+
+    var single_visual_trial = {
+        timeline: [visual_instructions, single_task_visual_alerts, nasa_tlx]
+    }
+
+    var single_tracking_trial = {
+        timeline: [tracking_instructions, single_task_tracking, nasa_tlx]
+    }
+
+
+    // Shuffle single trials 
+    var single_trials = {
+        timeline: shuffle([single_audio_trial, single_speech_trial, single_visual_trial, single_tracking_trial])
+    }
+
+
+    // Dual Trials 
+    var dual_audio_trial = {
+        timeline: [audio_tracking_instructions, dual_task_audio_alerts_and_tracking_task, nasa_tlx]
+    }
+
+    var dual_speech_trial = {
+        timeline: [speech_tracking_instructions, dual_task_audio_alert_speech_and_tracking_task, nasa_tlx]
+    }
+
+    var dual_visual_trial = {
+        timeline: [visual_tracking_instructions, dual_task_visual_alerts_and_tracking_task, nasa_tlx],
+    }
+
+    // Shuffle dual trials 
+    var dual_trials = {
+        timeline: shuffle([dual_audio_trial, dual_speech_trial, dual_visual_trial])
+    }
+
+
+    var enter_fullscreen = {
+        type: 'fullscreen', 
+        fullscreen_mode: true
+
+    }
+
+    var exit_fullscreen = {
+        type: 'fullscreen', 
+        fullscreen_mode: false 
+    }
+
+
     jsPsych.init({
 
         // use html audio so you can play sounds multiple times
         use_webaudio: false,
 
-        timeline: [instructions, preload, single_trials, dual_trials],
-
+        timeline: [instructions, enter_fullscreen, preload, single_trials, dual_trials, demographics, exit_fullscreen],
         //timeline: [nasa_tlx],
-        
+        //timeline: [demographics], 
         // progress bar
         show_progress_bar: true,
         auto_update_progress_bar: false,
-
 
 
         on_finish: function () {
