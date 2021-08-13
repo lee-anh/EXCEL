@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Experiment</title>
+
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="jspsych/plugins/jspsych-preload.js"></script>
+    <script src="jspsych/plugins/jspsych-instructions.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-multi-choice.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-text.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-likert.js"></script>
+    <script src="jspsych/plugins/jspsych-fullscreen.js"></script>
+
+    <script src="my-audio-button-response.js"></script>
+    <script src="my-html-slider-response.js"></script>
+    <script src="my-html-button-response.js"></script>
+    <script src="my-canvas-button-response.js"></script>
+    <script src="my-survey-multi-choice.js"></script>
+
+    <script src="jspsych-canvas-animation-tracking-visual.js"></script>
+    <script src="jspsych-canvas-animation-tracking-audio.js"></script>
+    <script src="jspsych-canvas-animation-visual.js"></script>
+    <script src="jspsych-canvas-animation-audio.js"></script>
+    <script src="jspsych-canvas-animation-tracking.js"></script>
+
+    <link href="jspsych/css/jspsych.css" rel="stylesheet">
+
+    <style>
+        canvas {
+            border: #333 3px solid;
+        }
+    </style>
+
+
+</head>
+
+<body> </body>
+
+<script>
+
+
+    var timeline = [];
+
+    // canvas size 
+    var c_size = 600;
+
+    // trial duration in milliseconds
+    var t_duration = 180000;
+
+    // feedback duration in frames 
+    var fb_duration = 30;
+
+    // ball velocity squared
+    var ball_v_sq = 12;
+
+    // keyboard choices 
+    var kb_choices = ['w', 's']; 
+
+    // number of sub trials 
+    var num_s_trials = 8;
+
+    // tones files
+    var up_tone = 'aud/E5_183ms.wav';
+    var down_tone = 'aud/C5_433ms.wav';
+
+    // speech files
+    var up_speech = 'aud/up183ms.wav';
+    var down_speech = 'aud/down433ms.wav';
+
+
+    // nasa tlx 
+
+    var instructions = {
+        type: 'instructions',
+        pages: ['<b>Welcome! Before you start, please:</b><p>Only complete this on a laptop or desktop computer</p><p>Make sure your browser window is full screen</p><p>Do not change tabs during the experiment</p><p>Have as few tabs as possible open on your browser</p><p>Make sure your computer audio is on</p>', '<p>This experiment has 7 modules. Each module is 3 minutes and is followed by a short survey to measure your perceived workload.</p> <p> Click the next button to start</p>'],
+        show_clickable_nav: true
+    };
+
+    var audio_first_instruction = {
+        type: 'my-html-button-response',
+        stimulus: '<p>In this module, you will be intermittenly interrupted with auditory interruptions.</p>',
+        choices: ['Continue']
+    }
+
+    var audio_alert_high = {
+        type: 'my-audio-button-response',
+        stimulus: up_tone,
+        choices: ['Continue'],
+        prompt: '<p>When you hear this HIGHER sound, press the \"w\" key on the keyboard</p>'
+    }
+
+    var audio_alert_low = {
+        type: 'my-audio-button-response',
+        stimulus: down_tone,
+        choices: ['Continue'],
+        prompt: '<p>When you hear this LOWER sound, press the \"s\" key on the keyboard</p>'
+    }
+
+    var speech_alert_high = {
+        type: 'my-audio-button-response',
+        stimulus: up_speech,
+        choices: ['Continue'],
+        prompt: '<p>When you hear the word \"UP\", press \"w\" key on the keyboard</p>'
+    }
+
+    var speech_alert_low = {
+        type: 'my-audio-button-response',
+        stimulus: down_speech,
+        choices: ['Continue'],
+        prompt: '<p>When you hear the word \"DOWN\" press \"s\" key on the keyboard</p>'
+    }
+
+    var visual_first_instruction = {
+        type: 'my-html-button-response',
+        stimulus: '<p>In this module, you will be intermittenly interrupted with visual icons in the square in the middle of your screen.</p>',
+        choices: ['Continue']
+
+    }
+    var visual_alert_up = {
+        type: 'my-canvas-button-response',
+        stimulus: function (c) {
+            var ctx = c.getContext("2d");
+            ctx.fillStyle = '#cccccc';
+            // draw the center square
+
+            canvas_width = 500;
+            canvas_quarter = 188;
+            ctx.fillRect(canvas_width / 2 - canvas_quarter / 2, canvas_width / 2 - canvas_quarter / 2, canvas_quarter, canvas_quarter);
+
+
+            ctx.fillStyle = 'black';
+            // draw up arrow 
+            ctx.fillRect(Math.ceil(canvas_width / 2 - 13), Math.ceil(canvas_width / 2 - 20), 27, 65);
+
+            // arrow head 
+            ctx.beginPath();
+            ctx.moveTo(Math.ceil(canvas_width / 2 - 40), Math.ceil(canvas_width / 2 - 20));
+            ctx.lineTo(Math.ceil(canvas_width / 2), Math.ceil(canvas_width / 2 - 60));
+            ctx.lineTo(Math.ceil(canvas_width / 2 + 40), Math.ceil(canvas_width / 2 - 20));
+            ctx.fill();
+
+
+        },
+        prompt: '<p>When you see this icon in the center square of the screen, press the \"w\" key on the keyboard</p>',
+        canvas_size: [500, 500],
+        choices: ['Continue']
+    }
+
+    var visual_alert_down = {
+        type: 'my-canvas-button-response',
+        stimulus: function (c) {
+            var ctx = c.getContext("2d");
+            // draw the center square 
+
+            ctx.fillStyle = '#cccccc';
+            // draw the center square
+            canvas_width = 500;
+            canvas_quarter = 188;
+            ctx.fillRect(canvas_width / 2 - canvas_quarter / 2, canvas_width / 2 - canvas_quarter / 2, canvas_quarter, canvas_quarter);
+
+            ctx.fillStyle = 'black';
+
+            // draw the down arrow
+            ctx.fillRect(Math.ceil(canvas_width / 2 - 13), Math.ceil(canvas_width / 2 - 50), 27, 60);
+            // arrow head 
+            ctx.beginPath();
+            ctx.moveTo(Math.ceil(canvas_width / 2 - 40), Math.ceil(canvas_width / 2 + 10));
+            ctx.lineTo(Math.ceil(canvas_width / 2), Math.ceil(canvas_width / 2 + 50));
+            ctx.lineTo(Math.ceil(canvas_width / 2 + 40), Math.ceil(canvas_width / 2 + 10));
+            ctx.fill();
+
+        },
+        prompt: '<p>When you see this icon in the center square of the screen, press the \"s\" key on the keyboard</p>',
+        canvas_size: [500, 500],
+        choices: ['Continue']
+    }
+
+
+    var tracking_first_instruction = {
+        type: 'my-html-button-response',
+        stimulus: '<p>In this module, you are asked to complete a visual tracking task: Trying to cover a moving circle with a square controlled by the mouse.</p>',
+        choices: ['Continue']
+    }
+
+    var tracking_touching = {
+        type: 'my-canvas-button-response',
+        stimulus: function (c) {
+            var ctx = c.getContext("2d");
+            // draw the center square 
+
+            ctx.fillStyle = '#cccccc';
+            // draw the center square
+            canvas_width = 500;
+            canvas_quarter = 188;
+            ctx.fillRect(canvas_width / 2 - canvas_quarter / 2, canvas_width / 2 - canvas_quarter / 2, canvas_quarter, canvas_quarter);
+
+
+            // ball
+            ctx.fillStyle = 'black';
+            ctx.arc(35, 35, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+
+            // mouse tracker
+            ctx.fillStyle = 'green';
+            ctx.fillRect(40, 40, 60, 60);
+
+
+        },
+        prompt: '<p>The ball will start moving. Cover it with the mouse. The color of the square will let you know how well you\'re doing.</p><p>The square will be green when in contact with the ball.</p>',
+        canvas_size: [500, 500],
+        choices: ['Continue']
+    }
+
+    var tracking_not_touching = {
+        type: 'my-canvas-button-response',
+        stimulus: function (c) {
+            var ctx = c.getContext("2d");
+            // draw the center square 
+
+            ctx.fillStyle = '#cccccc';
+            // draw the center square
+            canvas_width = 500;
+            canvas_quarter = 188;
+            ctx.fillRect(canvas_width / 2 - canvas_quarter / 2, canvas_width / 2 - canvas_quarter / 2, canvas_quarter, canvas_quarter);
+
+
+            // ball
+            ctx.fillStyle = 'black';
+            ctx.arc(35, 35, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+
+            // mouse tracker
+            ctx.fillStyle = 'red';
+            ctx.fillRect(60, 60, 60, 60);
+
+
+
+
+        },
+        prompt: '<p>The square will be red when it is not in contact with the ball.</p>',
+        canvas_size: [500, 500],
+        choices: ['Continue']
+    }
+
+    var dual_speech_audio_tracking_instructions = {
+        type: 'my-html-button-response', 
+        stimulus: '<p>In this module, you will complete the visual tracking task and you will be intermittenly interrupted with auditory interruptions.</p>', 
+        choices: ['Continue']
+    }
+
+    var dual_visual_tracking_instructions = {
+        type: 'my-html-button-response', 
+        stimulus: '<p>In this module, you will complete the visual tracking task and you will be intermittenly interrupted with visual icons in the square in the middle of your screen.</p>', 
+        choices: ['Continue']
+    }
+
+    var hand_position_instructions = {
+        type: 'my-html-button-response', 
+        stimulus: '<p> During the module, keep your left index finger on the \"w\" and \"s\" keys and your right hand on your trackpad/mouse.</p>',
+        choices: ['Continue']
+
+    }
+
+
+    var last_instruction = {
+        type: 'my-html-button-response',
+        stimulus: '<p>The program will automatically end and move on to the next section when the run is over. Good luck!</p>',
+        choices: ['Start module']
+
+    }
+
+    var preload = {
+        type: 'preload',
+        auto_preload: true,
+        show_progress_bar: true, // show the progress bar
+        message: 'Loading...',
+        max_load_time: 60000, // 1 minute 
+        error_message: 'The experiment failed to load. Please contact the researcher.'
+    }
+
+    var single_task_visual_alerts = {
+        type: 'canvas-animation-visual',
+        canvas_size: [c_size, c_size],
+        choices: kb_choices,
+        trial_duration: t_duration,
+        high_stimulus_duration: 11,
+        low_stimulus_duration: 26,
+        stimulus_max_response_time: 90,
+        feedback_duration: fb_duration,
+        num_sub_trials: num_s_trials,
+        mouse_sampling_rate: 3
+
+    }
+
+    var single_task_audio_alerts = {
+        type: 'canvas-animation-audio',
+        canvas_size: [c_size, c_size],
+        choices: kb_choices,
+        high_stimulus: up_tone,
+        low_stimulus: down_tone,
+        trial_duration: t_duration,
+        stimulus_duration: 30,
+        stimulus_max_response_time: 120,
+        feedback_duration: fb_duration,
+        num_sub_trials: num_s_trials
+
+    }
+    var single_task_speech_audio_alerts = {
+        type: 'canvas-animation-audio',
+        canvas_size: [c_size, c_size],
+        choices: kb_choices,
+        high_stimulus: up_speech,
+        low_stimulus: down_speech,
+        trial_duration: t_duration,
+        stimulus_duration: 30,
+        stimulus_max_response_time: 120,
+        feedback_duration: fb_duration,
+        num_sub_trials: num_s_trials
+
+    }
+
+    var single_task_tracking = {
+        type: 'canvas-animation-tracking',
+        canvas_size: [c_size, c_size],
+        ball_velocity_squared: ball_v_sq,
+        trial_duration: t_duration,
+        mouse_sampling_rate: 3,
+        num_sub_trials: num_s_trials
+
+    }
+
+    var dual_task_audio_alerts_and_tracking_task = {
+        type: 'canvas-animation-tracking-audio',
+        canvas_size: [c_size, c_size],
+        choices: kb_choices,
+        high_stimulus: up_tone,
+        low_stimulus: down_tone,
+        trial_duration: t_duration,
+        stimulus_max_response_time: 120,
+        feedback_duration: fb_duration,
+        mouse_sampling_rate: 3,
+        num_sub_trials: num_s_trials,
+        ball_velocity_squared: ball_v_sq
+
+    };
+
+    var dual_task_audio_alert_speech_and_tracking_task = {
+        type: 'canvas-animation-tracking-audio',
+        canvas_size: [c_size, c_size],
+        choices: kb_choices,
+        high_stimulus: up_speech,
+        low_stimulus: down_speech,
+        trial_duration: t_duration,
+        stimulus_max_response_time: 120,
+        feedback_duration: fb_duration,
+        mouse_sampling_rate: 3,
+        num_sub_trials: num_s_trials,
+        ball_velocity_squared: ball_v_sq
+    }
+
+
+
+    var dual_task_visual_alerts_and_tracking_task = {
+        type: 'canvas-animation-tracking-visual',
+        canvas_size: [c_size, c_size],
+        choices: kb_choices,
+        trial_duration: t_duration,
+        high_stimulus_duration: 11,
+        low_stimulus_duration: 26,
+        stimulus_max_response_time: 90,
+        feedback_duration: fb_duration,
+        mouse_sampling_rate: 3,
+        num_sub_trials: num_s_trials,
+        ball_velocity_squared: ball_v_sq
+
+    }
+
+
+    // NASA TLX 
+
+    var nasa_tlx_intro = {
+        type: 'instructions',
+        show_clickable_nav: true,
+        pages: ['<p>We are not only interested in assessing your performance but also the experiences you had during the different task conditions. Right now we are going to describe the technique that will be used to examine your experiences. In the most general sense we are examining the \“Workload\" you experienced. Workload is a difficult concept to define precisely, but a simple one to understand generally. The factors that influence your experience of workload may come from the task itself, your feelings about your own performance, how much effort you put in, or the stress and frustration you felt. The workload contributed by different task elements may change as you get more familiar with a task, perform easier or harder versions of it, or move from one task to another. Physical components of workload are relatively easy to conceptualize and evaluate. However, the mental components of workload may be more difficult to measure. </p><p>Since workload is something that is experienced individually by each person, there are no effective \"rulers\" that can be used to estimate the workload of different activities. One way to find out about workload is to ask people to describe the feelings they experienced. Because workload may be caused by many different factors, we would like you to evaluate several of them individually rather than lumping them into a single global evaluation of overall workload. This set of six rating scales was developed for you to use in evaluating your experiences during different tasks. Please read the descriptions of the scales carefully.</p>',
+            '<p><b>Rating instructions:</b> You will evaluate the task by marking each scale at the point which matches your experience. Each line has two endpoint descriptors that describe the scale. Note that \"own performance\" goes from \“good\" on the left to \“poor\" on the right. This order has been confusing for some people. Consider each scale individually. Your ratings will play an important role in the evaluation being conducted, thus, your active participation is essential to the success of this experiment, and is greatly appreciated.</p>',
+            '<p><b>Instructions:</b> Read the descriptions of factors that may affect workload and drag each slider on each scale to rate how much workload you experienced for that factor while doing the task.</p>']
+
+    }
+
+    var nasa_tlx_weights_instructions = {
+        type: 'my-html-button-response',
+        stimulus: '<p><b>Weights instructions:</b> The evaluation you are about to perform is a technique that has been developed by NASA to assess the relative importance of six factors in determining how much workload you experienced. The procedure is simple: You will be presented with a series of pairs of rating scale titles (for example, Effort vs. Mental Demands) and asked to choose which of the items was more important to your experience of workload in the task(s) that you just performed. Select the scale title that represents the more important contributor to workload for the specific task(s) you performed.</p>',
+        choices: ['Continue']
+    }
+
+    var nasa_tlx_mental_demand = {
+        type: 'my-html-slider-response',
+        labels: ['Low mental demand', 'High mental demand'],
+        slider_width: 500,
+        step: 5,
+        require_movement: true,
+        prompt: '<p>How much mental and perceptual activity was required (e.g. thinking, deciding, calculating, remembering, looking, searching, etc.)? Was the task easy or demanding, simple or complex, exacting or forgiving?</p><p><b>Mental Demand</b></p>'
+    }
+
+    var nasa_tlx_physical_demand = {
+        type: 'my-html-slider-response',
+        labels: ['Low physical demand', 'High physical demand'],
+        slider_width: 500,
+        step: 5,
+        require_movement: true,
+        prompt: '<p>How much physical activity was required (e.g. pushing, pulling, tuming, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?</p><p><b>Physcial Demand</b></p>'
+    }
+
+
+    var nasa_tlx_temporal_demand = {
+        type: 'my-html-slider-response',
+        labels: ['Low temporal demand', 'High temporal demand'],
+        slider_width: 500,
+        step: 5,
+        require_movement: true,
+        prompt: '<p>How much time pressure did you feel due to the rate of pace at which the tasks or task elements occurred? Was the pace slow and leisurely or rapid and frantic?</p><p><b>Temporal Demand</b></p>'
+    }
+
+    var nasa_tlx_performance = {
+        type: 'my-html-slider-response',
+        labels: ['Good performance', 'Poor performance'],
+        slider_width: 500,
+        step: 5,
+        require_movement: true,
+        prompt: '<p>How successful do you think you were in accomplishing the goals of the task set by the experimenter (or yourself)? How satisfied were you with your performance in accomplishing these goals?</p><p><b>Performance</b></p>'
+    }
+
+    var nasa_tlx_effort = {
+        type: 'my-html-slider-response',
+        labels: ['Low effort', 'High effort'],
+        slider_width: 500,
+        step: 5,
+        require_movement: true,
+        prompt: '<p>How hard did you have to work (mentally and physically) to accomplish your level of performance?<p><p><b>Effort</p></b>'
+
+    }
+
+
+    var nasa_tlx_frustration = {
+        type: 'my-html-slider-response',
+        labels: ['Low frusteration', 'High frusteration'],
+        slider_width: 500,
+        step: 5,
+        require_movement: true,
+        prompt: '<p>How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed, and complacent did you feel during the task?</p><p><b>Frustration</b></p>'
+    }
+
+    var weighting_prompt = "Select the factor that contributed more to workload for the task you completed."
+    var effort = "<b>Effort</b> - How hard did you have to work (mentally and physically) to accomplish your level of performance?";
+    var perfomance = "<b>Performance</b> - How successful do you think you were in accomplishing the goals of the task set by the experimenter (or yourself)? How satisfied were you with your performance in accomplishing these goals?";
+    var temporal_demand = "<b>Temporal Demand</b> - How much time pressure did you feel due to the rate of pace at which the tasks or task elements occurred? Was the pace slow and leisurely or rapid and frantic?";
+    var physical_demand = "<b>Physical Demand</b> - How much physical activity was required (e.g. pushing, pulling, tuming, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?";
+    var mental_demand = "<b>Mental Demand</b> - How much mental and perceptual activity was required (e.g. thinking, deciding, calculating, remembering, looking, searching, etc)? Was the task easy or demanding, simple or complex, exacting or forgiving?";
+    var frustration = "<b>Frustration</b> - How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed, and complacent did you feel during the task?";
+
+    var nasa_tlx_weights_1 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 1', options: [effort, perfomance], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_2 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 2', options: [temporal_demand, frustration], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_3 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 3', options: [temporal_demand, effort], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_4 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 4', options: [physical_demand, frustration], required: true, horizontal: true },
+        ]
+    }
+    var nasa_tlx_weights_5 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 5', options: [perfomance, frustration], required: true, horizontal: true },
+        ]
+    }
+    var nasa_tlx_weights_6 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 6', options: [physical_demand, temporal_demand], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_7 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 7', options: [physical_demand, perfomance], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_8 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 8', options: [temporal_demand, mental_demand], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_9 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 9', options: [frustration, effort], required: true, horizontal: true },
+        ]
+    }
+    var nasa_tlx_weights_10 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 10', options: [perfomance, mental_demand], required: true, horizontal: true },
+        ]
+    }
+
+
+    var nasa_tlx_weights_11 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 11', options: [perfomance, temporal_demand], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_12 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 12', options: [mental_demand, effort], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_13 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 13', options: [mental_demand, physical_demand], required: true, horizontal: true }
+        ]
+    }
+    var nasa_tlx_weights_14 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 14', options: [effort, physical_demand], required: true, horizontal: true },
+        ]
+    }
+    var nasa_tlx_weights_15 = {
+        type: 'survey-multi-choice',
+        questions: [
+            { prompt: weighting_prompt, name: 'Question 15', options: [frustration, mental_demand], required: true, horizontal: true },
+        ],
+        on_finish: function () {
+            jsPsych.setProgressBar(jsPsych.getProgressBarCompleted() + 1 / 7);
+        }
+    }
+
+    // Demographic questions 
+    // TODO: Figure out how to make this into a response box
+    var testing = {
+        type: 'my-survey-multi-choice', 
+        questions: [
+            {prompt: "Please select your gender:", name:"Q1", options:["Female", "Male", "Prefer not to respond"], fill_in_option: "Prefer to self-describe  "}
+        ]
+    }
+
+    var demo_q1 =  {
+        type: 'survey-multi-choice', 
+        questions: [
+            {prompt: "Please select your gender:", name: "Q1", options: ["Female", "Male", "Prefer to self-describe", "Prefer not to respond"]}
+        ]
+    }
+
+    var demo_q2 = {
+        type: 'survey-text', 
+        questions: [
+            {prompt: "Please write your age:", name: 'Q2'}
+        ]
+    }
+
+    var demo_q3 = {
+        type: 'survey-multi-choice', 
+        questions: [
+            {prompt: "Which hand do you normally use to control a computer mouse?", name:'Q3', options: ["Right Hand", "Left Hand"]}
+        ]
+    }
+
+    var demo_q4_q5_q6 = {
+        type: 'survey-text', 
+        questions: [
+            {prompt: "How many years of experience do you have playing a musical instrument or singing? (Enter 0 if you have no experience playing a musical instrument.)", name: 'Q4'}, 
+            {prompt: "For how many years have you been able to read musical notation? (Enter 0 if you cannot read musical notation.)", name: 'Q5'}, 
+            {prompt: "How many years of formal musical training (including lessons, group or private instruction, and/or participation in bands, orchestras, or choirs) do you have? (Enter 0 if you have no formal training.)", name: 'Q6'}
+        ]
+    }
+
+    var demo_q7_q8 = {
+        type: 'survey-multi-choice', 
+        questions: [
+            {prompt: "Are you a music major?", name: 'Q7', options: ["Yes", "No"]}, 
+            {prompt: "Is English your first language?", name: 'Q8', options: ["Yes", "No"]}
+        ]
+    }
+
+    
+    var demo_q9_q10 = {
+        type:'survey-likert', 
+        questions:[
+            {prompt: "Please rate your musical ability.", name: 'Q9', labels: ['1 - I have no musical ability at all', '2', '3', '4', '5', '6', '7 - I am a professional musician']}, 
+            {prompt: "I followed the study instructions to the best of my ability for this entire experiment", name: 'Q10', labels: ['1 - Strongly disagree', '2', '3', '4', '5', '6', '7 - Strongly agree']}
+        ]
+    }
+    
+   var demo_q9 = {
+       type: 'my-html-slider-response', 
+       prompt: '<p>Please rate your musical ability</p>', 
+       labels: ['I have no musical ability at all', 'I am a professional musician'], 
+       slider_width: 500, 
+       slider_start: 4, 
+       min: 1, 
+       max: 7
+
+   }
+   
+   var demo_q10 = {
+       type: 'my-html-slider-response', 
+       prompt: '<p>I followed the study insructions to the best of my ability for this entire experiment.</p>', 
+       labels: ['Strongly disagree', 'Strongly agree'], 
+       slider_width: 500, 
+       slider_start: 4, 
+       min: 1, 
+       max: 7 
+
+   }
+
+   
+
+    var demo_q11_q12 = {
+        type: 'survey-text', 
+        questions:[
+            {prompt: "Did you encounter any technical difficulties with the computer program in this study? If yes, please describe.", name: 'Q11'}, 
+            {prompt: "Do you have any additional comments about your experiences during this study?", name: 'Q12'}
+        ]
+
+    }
+
+    // organize trials 
+
+    var nasa_tlx = {
+        timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_physical_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frustration, nasa_tlx_weights_instructions, nasa_tlx_weights_1, nasa_tlx_weights_2, nasa_tlx_weights_3, nasa_tlx_weights_4, nasa_tlx_weights_5, nasa_tlx_weights_6, nasa_tlx_weights_7, nasa_tlx_weights_8, nasa_tlx_weights_9, nasa_tlx_weights_10, nasa_tlx_weights_11, nasa_tlx_weights_12, nasa_tlx_weights_13, nasa_tlx_weights_14, nasa_tlx_weights_15]
+    }
+
+    
+    var demographics = {
+        //timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9_q10, demo_q11_q12]
+        timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_q10, demo_q11_q12]
+    }
+
+    var audio_instructions = {
+        timeline: [audio_first_instruction, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
+
+    }
+    var speech_instructions = {
+        timeline: [audio_first_instruction, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
+    }
+
+    var visual_instructions = {
+        timeline: [visual_first_instruction, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
+    }
+
+    var tracking_instructions = {
+        timeline: [tracking_first_instruction, tracking_touching, tracking_not_touching, hand_position_instructions, last_instruction]
+    }
+
+    var audio_tracking_instructions = {
+        timeline: [dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
+    }
+
+    var speech_tracking_instructions = {
+        timeline: [dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
+    }
+
+    var visual_tracking_instructions = {
+        timeline: [dual_visual_tracking_instructions, tracking_touching, tracking_not_touching, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
+    }
+
+
+    /**
+     * Fisher-Yates Algorithm for shuffling arrays
+     * @author community wiki <https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array>
+     * @param {array} array array to shuffle 
+     * @returns {array} shuffled array 
+     */
+     function shuffle(array) {
+        var currentIndex = array.length, randomIndex;
+
+        // While there remain elements to shuffle
+        while (0 !== currentIndex) {
+
+            // Pick a remaining element
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+        }
+
+
+        return array;
+    }
+
+
+    // Single Trials 
+    var single_audio_trial = {
+        timeline: [audio_instructions, single_task_audio_alerts, nasa_tlx]
+    }
+
+    var single_speech_trial = {
+        timeline: [speech_instructions,single_task_speech_audio_alerts, nasa_tlx]
+    }
+
+    var single_visual_trial = {
+        timeline: [visual_instructions, single_task_visual_alerts, nasa_tlx]
+    }
+
+    var single_tracking_trial = {
+        timeline: [tracking_instructions, single_task_tracking, nasa_tlx]
+    }
+
+
+    // Shuffle single trials 
+    var single_trials = {
+        timeline: shuffle([single_audio_trial, single_speech_trial, single_visual_trial, single_tracking_trial])
+    }
+
+
+    // Dual Trials 
+    var dual_audio_trial = {
+        timeline: [audio_tracking_instructions, dual_task_audio_alerts_and_tracking_task, nasa_tlx]
+    }
+
+    var dual_speech_trial = {
+        timeline: [speech_tracking_instructions, dual_task_audio_alert_speech_and_tracking_task, nasa_tlx]
+    }
+
+    var dual_visual_trial = {
+        timeline: [visual_tracking_instructions, dual_task_visual_alerts_and_tracking_task, nasa_tlx],
+    }
+
+    // Shuffle dual trials 
+    var dual_trials = {
+        timeline: shuffle([dual_audio_trial, dual_speech_trial, dual_visual_trial])
+    }
+
+
+    var enter_fullscreen = {
+        type: 'fullscreen', 
+        fullscreen_mode: true
+
+    }
+
+    var exit_fullscreen = {
+        type: 'fullscreen', 
+        fullscreen_mode: false 
+    }
+
+
+    jsPsych.init({
+
+        // use html audio so you can play sounds multiple times
+        use_webaudio: false,
+
+        //timeline: [instructions, enter_fullscreen, preload, single_trials, dual_trials, demographics, exit_fullscreen],
+        //timeline: [nasa_tlx],
+        timeline: [demographics],
+        //timeline: [single_tracking_trial],  
+        //timeline: [testing], 
+        // progress bar
+        show_progress_bar: true,
+        auto_update_progress_bar: false,
+
+
+        on_finish: function () {
+            //jsPsych.data.displayData('csv'); // will this affect the data output on Cognition?
+            jsPsych.data.displayData();
+
+
+        }
+    })
+
+
+</script>
+
+</html>
