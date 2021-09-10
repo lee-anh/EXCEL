@@ -11,6 +11,7 @@
     <script src="jspsych/plugins/jspsych-survey-multi-choice.js"></script>
     <script src="jspsych/plugins/jspsych-survey-text.js"></script>
     <script src="jspsych/plugins/jspsych-survey-likert.js"></script>
+    <script src="jspsych/plugins/jspsych-survey-multi-select.js"></script>
     <script src="jspsych/plugins/jspsych-fullscreen.js"></script>
 
     <script src="my-audio-button-response.js"></script>
@@ -57,7 +58,7 @@
     var ball_v_sq = 12;
 
     // keyboard choices 
-    var kb_choices = ['w', 's']; 
+    var kb_choices = ['w', 's'];
 
     // number of sub trials 
     var num_s_trials = 8;
@@ -75,9 +76,36 @@
 
     var instructions = {
         type: 'instructions',
-        pages: ['<b>Welcome! Before you start, please:</b><p>Only complete this on a laptop or desktop computer</p><p>Make sure your browser window is full screen</p><p>Do not change tabs during the experiment</p><p>Have as few tabs as possible open on your browser</p><p>Make sure your computer audio is on</p>', '<p>This experiment has 7 modules. Each module is 3 minutes and is followed by a short survey to measure your perceived workload.</p> <p> Click the next button to start</p>'],
+        pages: ['<b>Welcome! Before you start, please:</b><p>Only complete this on a laptop or desktop computer</p><p>Do NOT change tabs while the experiment is running. Doing so will invalidate your data. Times when you can take breaks and switch to a different browser tab/window will be specified.</p><p>Have as few tabs as possible open on your browser</p><p>Make sure your computer audio is on and speakers are at least at 50%</p><p>Do NOT use airpods or any other bluetooth headphones</p>', '<p>This experiment has 7 modules. Each module is 3 minutes and is followed by a short survey to measure your perceived workload.</p> <p> Click the next button to start</p>'],
         show_clickable_nav: true
     };
+
+    // confirm the instructions using multiple choice to increase chance that the partcipant has read all of them 
+    var instructions_confirms = {
+        type: 'survey-multi-select',
+        questions: [
+            { prompt: "<b>Welcome! Before you start, please check of each of the following instructions to confirm you have read them</b>", options:[]},
+
+            { prompt: "", options: ["Only complete this on a laptop or desktop"], required: true },
+            { prompt: "", options: ["Do NOT change tabs while the experiment is running. Doing so will invalidate your data. Times when you can take breaks and switch to a different browser tab/window will be specified."], required: true },
+            { prompt: "", options: ["Have as few tabs as possible open on your browser"], required: true },
+            { prompt: "", options: ["Do NOT use airpods or any other bluetooth headphones"], required: true }
+        ]
+    }
+
+    var instructions_confirms2 = {
+        type: 'my-html-button-response',
+        stimulus: '<p>This experiment has 7 modules. Each module is 3 minutes and is followed by a short survey to measure your perceived workload. Click the start button below to start.</p>',
+        choices: ["Start"]
+
+    }
+
+    var break_screen = {
+        type: 'my-html-button-response', 
+        stimulus: '<p>If you would like to take a break (switch tabs in your browser/do something else on your computer) you may do so now. When you are ready to continue with the experiment, click the button below.</p>', 
+        choices: ["Continue with Experiment"]
+    }
+
 
     var audio_first_instruction = {
         type: 'my-html-button-response',
@@ -248,24 +276,24 @@
     }
 
     var dual_speech_audio_tracking_instructions = {
-        type: 'my-html-button-response', 
-        stimulus: '<p>In this module, you will complete the visual tracking task and you will be intermittenly interrupted with auditory interruptions.</p>', 
+        type: 'my-html-button-response',
+        stimulus: '<p>In this module, you will complete the visual tracking task and you will be intermittenly interrupted with auditory interruptions.</p>',
         choices: ['Continue']
     }
 
     var dual_visual_tracking_instructions = {
-        type: 'my-html-button-response', 
-        stimulus: '<p>In this module, you will complete the visual tracking task and you will be intermittenly interrupted with visual icons in the square in the middle of your screen.</p>', 
+        type: 'my-html-button-response',
+        stimulus: '<p>In this module, you will complete the visual tracking task and you will be intermittenly interrupted with visual icons in the square in the middle of your screen.</p>',
         choices: ['Continue']
     }
 
 
     var hand_position_instructions = {
-        type: 'my-image-button-response', 
-        stimulus: 'hands.jpg',
-        stimulus_height: 500, 
-        maintain_aspect_ratio: true, 
-        prompt: "<p> During the module, keep your left index finger on the \"w\" and \"s\" keys and your right hand on your trackpad/mouse.</p>",  
+        type: 'my-image-button-response',
+        stimulus: 'images/hands.jpg',
+        stimulus_height: 500,
+        maintain_aspect_ratio: true,
+        prompt: "<p> During the module, keep your left index finger on the \"w\" and \"s\" keys and your right hand on your trackpad/mouse.</p>",
         choices: ["Continue"]
     }
 
@@ -564,88 +592,88 @@
     // Demographic questions 
     // TODO: Figure out how to make this into a response box
     var testing = {
-        type: 'my-survey-multi-choice', 
+        type: 'my-survey-multi-choice',
         questions: [
-            {prompt: "Please select your gender:", name:"Q1", options:["Female", "Male", "Prefer not to respond"], fill_in_option: "Prefer to self-describe  "}
+            { prompt: "Please select your gender:", name: "Q1", options: ["Female", "Male", "Prefer not to respond"], fill_in_option: "Prefer to self-describe  " }
         ]
     }
 
-    var demo_q1 =  {
-        type: 'survey-multi-choice', 
+    var demo_q1 = {
+        type: 'survey-multi-choice',
         questions: [
-            {prompt: "Please select your gender:", name: "Q1", options: ["Female", "Male", "Prefer to self-describe", "Prefer not to respond"]}
+            { prompt: "Please select your gender:", name: "Q1", options: ["Female", "Male", "Prefer to self-describe", "Prefer not to respond"] }
         ]
     }
 
     var demo_q2 = {
-        type: 'survey-text', 
+        type: 'survey-text',
         questions: [
-            {prompt: "Please write your age:", name: 'Q2'}
+            { prompt: "Please write your age:", name: 'Q2' }
         ]
     }
 
     var demo_q3 = {
-        type: 'survey-multi-choice', 
+        type: 'survey-multi-choice',
         questions: [
-            {prompt: "Which hand do you normally use to control a computer mouse?", name:'Q3', options: ["Right Hand", "Left Hand"]}
+            { prompt: "Which hand do you normally use to control a computer mouse?", name: 'Q3', options: ["Right Hand", "Left Hand"] }
         ]
     }
 
     var demo_q4_q5_q6 = {
-        type: 'survey-text', 
+        type: 'survey-text',
         questions: [
-            {prompt: "How many years of experience do you have playing a musical instrument or singing? (Enter 0 if you have no experience playing a musical instrument.)", name: 'Q4'}, 
-            {prompt: "For how many years have you been able to read musical notation? (Enter 0 if you cannot read musical notation.)", name: 'Q5'}, 
-            {prompt: "How many years of formal musical training (including lessons, group or private instruction, and/or participation in bands, orchestras, or choirs) do you have? (Enter 0 if you have no formal training.)", name: 'Q6'}
+            { prompt: "How many years of experience do you have playing a musical instrument or singing? (Enter 0 if you have no experience playing a musical instrument.)", name: 'Q4' },
+            { prompt: "For how many years have you been able to read musical notation? (Enter 0 if you cannot read musical notation.)", name: 'Q5' },
+            { prompt: "How many years of formal musical training (including lessons, group or private instruction, and/or participation in bands, orchestras, or choirs) do you have? (Enter 0 if you have no formal training.)", name: 'Q6' }
         ]
     }
 
     var demo_q7_q8 = {
-        type: 'survey-multi-choice', 
+        type: 'survey-multi-choice',
         questions: [
-            {prompt: "Are you a music major?", name: 'Q7', options: ["Yes", "No"]}, 
-            {prompt: "Is English your first language?", name: 'Q8', options: ["Yes", "No"]}
+            { prompt: "Are you a music major?", name: 'Q7', options: ["Yes", "No"] },
+            { prompt: "Is English your first language?", name: 'Q8', options: ["Yes", "No"] }
         ]
     }
 
-    
+
     var demo_q9_q10 = {
-        type:'survey-likert', 
-        questions:[
-            {prompt: "Please rate your musical ability.", name: 'Q9', labels: ['1 - I have no musical ability at all', '2', '3', '4', '5', '6', '7 - I am a professional musician']}, 
-            {prompt: "I followed the study instructions to the best of my ability for this entire experiment", name: 'Q10', labels: ['1 - Strongly disagree', '2', '3', '4', '5', '6', '7 - Strongly agree']}
+        type: 'survey-likert',
+        questions: [
+            { prompt: "Please rate your musical ability.", name: 'Q9', labels: ['1 - I have no musical ability at all', '2', '3', '4', '5', '6', '7 - I am a professional musician'] },
+            { prompt: "I followed the study instructions to the best of my ability for this entire experiment", name: 'Q10', labels: ['1 - Strongly disagree', '2', '3', '4', '5', '6', '7 - Strongly agree'] }
         ]
     }
-    
-   var demo_q9 = {
-       type: 'my-html-slider-response', 
-       prompt: '<p>Please rate your musical ability</p>', 
-       labels: ['I have no musical ability at all', 'I am a professional musician'], 
-       slider_width: 500, 
-       slider_start: 4, 
-       min: 1, 
-       max: 7
 
-   }
-   
-   var demo_q10 = {
-       type: 'my-html-slider-response', 
-       prompt: '<p>I followed the study insructions to the best of my ability for this entire experiment.</p>', 
-       labels: ['Strongly disagree', 'Strongly agree'], 
-       slider_width: 500, 
-       slider_start: 4, 
-       min: 1, 
-       max: 7 
+    var demo_q9 = {
+        type: 'my-html-slider-response',
+        prompt: '<p>Please rate your musical ability</p>',
+        labels: ['I have no musical ability at all', 'I am a professional musician'],
+        slider_width: 500,
+        slider_start: 4,
+        min: 1,
+        max: 7
 
-   }
+    }
 
-   
+    var demo_q10 = {
+        type: 'my-html-slider-response',
+        prompt: '<p>I followed the study insructions to the best of my ability for this entire experiment.</p>',
+        labels: ['Strongly disagree', 'Strongly agree'],
+        slider_width: 500,
+        slider_start: 4,
+        min: 1,
+        max: 7
+
+    }
+
+
 
     var demo_q11_q12 = {
-        type: 'survey-text', 
-        questions:[
-            {prompt: "Did you encounter any technical difficulties with the computer program in this study? If yes, please describe.", name: 'Q11'}, 
-            {prompt: "Do you have any additional comments about your experiences during this study?", name: 'Q12'}
+        type: 'survey-text',
+        questions: [
+            { prompt: "Did you encounter any technical difficulties with the computer program in this study? If yes, please describe.", name: 'Q11' },
+            { prompt: "Do you have any additional comments about your experiences during this study?", name: 'Q12' }
         ]
 
     }
@@ -656,38 +684,38 @@
         timeline: [nasa_tlx_intro, nasa_tlx_mental_demand, nasa_tlx_physical_demand, nasa_tlx_temporal_demand, nasa_tlx_performance, nasa_tlx_effort, nasa_tlx_frustration, nasa_tlx_weights_instructions, nasa_tlx_weights_1, nasa_tlx_weights_2, nasa_tlx_weights_3, nasa_tlx_weights_4, nasa_tlx_weights_5, nasa_tlx_weights_6, nasa_tlx_weights_7, nasa_tlx_weights_8, nasa_tlx_weights_9, nasa_tlx_weights_10, nasa_tlx_weights_11, nasa_tlx_weights_12, nasa_tlx_weights_13, nasa_tlx_weights_14, nasa_tlx_weights_15]
     }
 
-    
+
     var demographics = {
         //timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9_q10, demo_q11_q12]
         timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_q10, demo_q11_q12]
     }
 
     var audio_instructions = {
-        timeline: [audio_first_instruction, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
+        timeline: [break_screen, audio_first_instruction, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
 
     }
     var speech_instructions = {
-        timeline: [audio_first_instruction, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
+        timeline: [break_screen, audio_first_instruction, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
     }
 
     var visual_instructions = {
-        timeline: [visual_first_instruction, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
+        timeline: [break_screen,visual_first_instruction, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
     }
 
     var tracking_instructions = {
-        timeline: [tracking_first_instruction, tracking_touching, tracking_not_touching, hand_position_instructions, last_instruction]
+        timeline: [break_screen,tracking_first_instruction, tracking_touching, tracking_not_touching, hand_position_instructions, last_instruction]
     }
 
     var audio_tracking_instructions = {
-        timeline: [dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
+        timeline: [break_screen,dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
     }
 
     var speech_tracking_instructions = {
-        timeline: [dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
+        timeline: [break_screen,dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
     }
 
     var visual_tracking_instructions = {
-        timeline: [dual_visual_tracking_instructions, tracking_touching, tracking_not_touching, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
+        timeline: [break_screen,dual_visual_tracking_instructions, tracking_touching, tracking_not_touching, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
     }
 
 
@@ -697,7 +725,7 @@
      * @param {array} array array to shuffle 
      * @returns {array} shuffled array 
      */
-     function shuffle(array) {
+    function shuffle(array) {
         var currentIndex = array.length, randomIndex;
 
         // While there remain elements to shuffle
@@ -723,7 +751,7 @@
     }
 
     var single_speech_trial = {
-        timeline: [speech_instructions,single_task_speech_audio_alerts, nasa_tlx]
+        timeline: [speech_instructions, single_task_speech_audio_alerts, nasa_tlx]
     }
 
     var single_visual_trial = {
@@ -761,14 +789,14 @@
 
 
     var enter_fullscreen = {
-        type: 'fullscreen', 
+        type: 'fullscreen',
         fullscreen_mode: true
 
     }
 
     var exit_fullscreen = {
-        type: 'fullscreen', 
-        fullscreen_mode: false 
+        type: 'fullscreen',
+        fullscreen_mode: false
     }
 
 
@@ -777,7 +805,11 @@
         // use html audio so you can play sounds multiple times
         use_webaudio: false,
 
-        timeline: [instructions, enter_fullscreen, preload, single_trials, dual_trials, demographics, exit_fullscreen],
+        //timeline with old instructions 
+        //timeline: [instructions, enter_fullscreen, preload, single_trials, dual_trials, demographics, exit_fullscreen],
+
+        //timeline with confirm instructions 
+        timeline: [instructions_confirms, instructions_confirms2, enter_fullscreen, preload, single_trials, dual_trials, demographics, exit_fullscreen],
         //timeline: [nasa_tlx],
         //timeline: [demographics],
         //timeline: [single_tracking_trial],  
@@ -789,7 +821,7 @@
 
         on_finish: function () {
             //jsPsych.data.displayData('csv'); // will this affect the data output on Cognition?
-            jsPsych.data.displayData();4
+            jsPsych.data.displayData(); 4
 
 
         }
