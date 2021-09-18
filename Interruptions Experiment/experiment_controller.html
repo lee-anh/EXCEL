@@ -787,6 +787,12 @@
         timeline: shuffle([dual_audio_trial, dual_speech_trial, dual_visual_trial])
     }
 
+    var thanks_and_bye = {
+        type: 'my-html-button-response', 
+        stimulus: '<p>Thank you so much for your participation!</p><p>If you have any questions or concerns, please reach out to Professor Nees at neesm@lafayette.edu.</p>',
+        choices: ['Finish']
+    }
+
 
     var enter_fullscreen = {
         type: 'fullscreen',
@@ -809,7 +815,7 @@
         //timeline: [instructions, enter_fullscreen, preload, single_trials, dual_trials, demographics, exit_fullscreen],
 
         //timeline with confirm instructions 
-        timeline: [instructions_confirms, instructions_confirms2, enter_fullscreen, preload, single_trials, dual_trials, demographics, exit_fullscreen],
+        timeline: [instructions_confirms, instructions_confirms2, enter_fullscreen, preload, single_trials, dual_trials, demographics, thanks_and_bye, exit_fullscreen],
         //timeline: [nasa_tlx],
         //timeline: [demographics],
         //timeline: [single_tracking_trial],  
@@ -821,7 +827,9 @@
 
         on_finish: function () {
             //jsPsych.data.displayData('csv'); // will this affect the data output on Cognition?
-            jsPsych.data.displayData(); 4
+            //jsPsych.data.displayData(); 4 
+
+            // Redirect should go here 
 
 
         }

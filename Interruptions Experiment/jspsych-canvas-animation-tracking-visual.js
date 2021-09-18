@@ -583,11 +583,12 @@ jsPsych.plugins["canvas-animation-tracking-visual"] = (function () {
           trial_data.millisecond_timing = toPrint;
           trial_data.frames_timing = toPrintFrames;
 
+          /*
           console.log("Times in ms");
           console.log(toPrint);
           console.log("Times in frames");
           console.log(toPrintFrames);
-
+          */
           // display trial data 
           jsPsych.finishTrial(trial_data);
 
