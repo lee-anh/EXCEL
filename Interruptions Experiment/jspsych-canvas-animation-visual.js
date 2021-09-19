@@ -562,11 +562,12 @@ jsPsych.plugins["canvas-animation-visual"] = (function () {
           trial_data.frames_timing = toPrintFrames;
 
           // log the times
+          /*
           console.log("Times in ms");
           console.log(toPrint);
           console.log("Times in frames");
           console.log(toPrintFrames);
-
+          */
           // send trial data 
           jsPsych.finishTrial(trial_data);
 

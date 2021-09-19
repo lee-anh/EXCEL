@@ -167,7 +167,7 @@ jsPsych.plugins['my-survey-multi-choice'] = (function() {
         html +=  '<label class="jspsych-survey-multi-choice-text" for="'+'jspsych-survey-multi-choice-response-'+question_id+'-'+question.options.length+'">';
         html += '<input type="radio" name="'+'jspsych-survey-multi-choice-response-'+question_id+'" id="'+'jspsych-survey-multi-choice-response-'+question_id+'-'+question.options.length+'" value="'+question.fill_in_option+'" '+'></input>';
         html += question.fill_in_option + '</label>';
-        html += '<input type="text" name="other" class = "jspsych-survey-multi-choice-text">' +'</input>';
+        html += '<input type="text" id = "txtInput" class = "jspsych-survey-multi-choice-text">' +'</input>';
         html += '</div'; 
       //}
       
@@ -175,7 +175,20 @@ jsPsych.plugins['my-survey-multi-choice'] = (function() {
       html += '</div>';
   
     }
+
     
+    
+
+    /*
+    var question_data_element = {}; 
+    var input_element = document.querySelector('#jspsych-survey-multi-choice-option-0').querySelector('input'); 
+    var val_element = input_element.value; 
+    var name = 1; 
+    var object_element = {}; 
+    object_element[name] = val_element; 
+    Object.assign(question_data_element, object_element); 
+    */
+  
     
     // add submit button
     html += '<div></div>';
@@ -213,11 +226,15 @@ jsPsych.plugins['my-survey-multi-choice'] = (function() {
         obje[name] = val;
         Object.assign(question_data, obje);
       }
+
+      var gender_value = document.getElementById("txtInput"); 
+      var valval = gender_value.value; 
       // save data
       var trial_data = {
         rt: response_time,
         response: question_data,
-        question_order: question_order
+        question_order: question_order, 
+        self_described_gender: valval
       };
       
 

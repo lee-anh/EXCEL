@@ -672,8 +672,8 @@
     var demo_q11_q12 = {
         type: 'survey-text',
         questions: [
-            { prompt: "Did you encounter any technical difficulties with the computer program in this study? If yes, please describe.", name: 'Q11' },
-            { prompt: "Do you have any additional comments about your experiences during this study?", name: 'Q12' }
+            { prompt: "Did you encounter any technical difficulties with the computer program in this study? If yes, please describe.", name: 'Q11', rows: 5, columns: 50},
+            { prompt: "Do you have any additional comments about your experiences during this study?", name: 'Q12', rows:5, columns: 50}
         ]
 
     }
@@ -686,8 +686,9 @@
 
 
     var demographics = {
-        //timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9_q10, demo_q11_q12]
-        timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_q10, demo_q11_q12]
+        //timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_q10, demo_q11_q12]
+        timeline: [testing, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_q10, demo_q11_q12]
+    
     }
 
     var audio_instructions = {
@@ -815,9 +816,9 @@
         //timeline: [instructions, enter_fullscreen, preload, single_trials, dual_trials, demographics, exit_fullscreen],
 
         //timeline with confirm instructions 
-        timeline: [instructions_confirms, instructions_confirms2, enter_fullscreen, preload, single_trials, dual_trials, demographics, thanks_and_bye, exit_fullscreen],
+        //timeline: [instructions_confirms, instructions_confirms2, enter_fullscreen, preload, single_trials, dual_trials, demographics, thanks_and_bye, exit_fullscreen],
         //timeline: [nasa_tlx],
-        //timeline: [demographics],
+        timeline: [demographics],
         //timeline: [single_tracking_trial],  
         //timeline: [testing], 
         // progress bar
@@ -827,7 +828,7 @@
 
         on_finish: function () {
             //jsPsych.data.displayData('csv'); // will this affect the data output on Cognition?
-            //jsPsych.data.displayData(); 4 
+            //jsPsych.data.displayData();  
 
             // Redirect should go here 
 
