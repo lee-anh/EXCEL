@@ -85,11 +85,16 @@
         type: 'survey-multi-select',
         questions: [
             { prompt: "<b>Welcome! Before you start, please check of each of the following instructions to confirm you have read them</b>", options:[]},
-
-            { prompt: "", options: ["Only complete this on a laptop or desktop"], required: true },
-            { prompt: "", options: ["Do NOT change tabs while the experiment is running. Doing so will invalidate your data. Times when you can take breaks and switch to a different browser tab/window will be specified."], required: true },
-            { prompt: "", options: ["Have as few tabs as possible open on your browser"], required: true },
-            { prompt: "", options: ["Do NOT use airpods or any other bluetooth headphones"], required: true }
+            { prompt: "", options: ["You must be in a quiet, distraction free environment"], required: true }, 
+            { prompt: "", options: ["You will need 45 minutes to complete the study. You cannot stop the study and resume it later."], required: true }, 
+            { prompt: "", options: ["You need to be comfortably seated so your hands can access your mouse/trackpad and keyboard."], required: true }, 
+            { prompt: "", options: ["Only complete this on a laptop or desktop with working speakers or wired headphones."], required: true },
+            { prompt: "", options: ["This experiment uses sound.  Please check that your volume is at a comfortable but easily hear-able level.  For most computers, about halfway up is a good setting."], required: true },       
+            { prompt: "", options: ["Please do NOT use airpods or any other bluetooth headphones."], required: true }, 
+            { prompt: "", options: ["This experiment runs best on Chrome. Please use Chrome if you have it."], required: true },
+            { prompt: "", options: ["Please do NOT change tabs while the experiment is running. Doing so will invalidate your data. Times when you can take breaks and switch to a different browser tab/window will be specified."], required: true },
+            { prompt: "", options: ["Have as few tabs as possible open on your browser."], required: true }
+            
         ]
     }
 
@@ -478,7 +483,7 @@
 
     var nasa_tlx_frustration = {
         type: 'my-html-slider-response',
-        labels: ['Low frusteration', 'High frusteration'],
+        labels: ['Low frustration', 'High frustration'],
         slider_width: 500,
         step: 5,
         require_movement: true,
@@ -590,11 +595,18 @@
     }
 
     // Demographic questions 
-    // TODO: Figure out how to make this into a response box
+    
     var testing = {
         type: 'my-survey-multi-choice',
         questions: [
             { prompt: "Please select your gender:", name: "Q1", options: ["Female", "Male", "Prefer not to respond"], fill_in_option: "Prefer to self-describe  " }
+        ]
+    }
+
+    var demo_speakers = {
+        type: 'my-survey-multi-choice', 
+        questions: [
+            { prompt: "How did you hear the sounds in the experiment?", name: "Speakers", options: ["Laptop or computer speakers", "Wired Headphones"], fill_in_option: "Other (please describe):"}
         ]
     }
 
@@ -687,7 +699,7 @@
 
     var demographics = {
         //timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_q10, demo_q11_q12]
-        timeline: [testing, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_q10, demo_q11_q12]
+        timeline: [testing, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_speakers, demo_q10, demo_q11_q12]
     
     }
 

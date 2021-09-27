@@ -234,7 +234,7 @@ jsPsych.plugins['my-survey-multi-choice'] = (function() {
         rt: response_time,
         response: question_data,
         question_order: question_order, 
-        self_described_gender: valval
+        other_option: valval
       };
       
 
