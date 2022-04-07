@@ -76,7 +76,8 @@
 
     var instructions = {
         type: 'instructions',
-        pages: ['<b>Welcome! Before you start, please:</b><p>Only complete this on a laptop or desktop computer</p><p>Do NOT change tabs while the experiment is running. Doing so will invalidate your data. Times when you can take breaks and switch to a different browser tab/window will be specified.</p><p>Have as few tabs as possible open on your browser</p><p>Make sure your computer audio is on and speakers are at least at 50%</p><p>Do NOT use airpods or any other bluetooth headphones</p>', '<p>This experiment has 7 modules. Each module is 3 minutes and is followed by a short survey to measure your perceived workload.</p> <p> Click the next button to start</p>'],
+        //pages: ['<b>Welcome! Before you start, please:</b><p>Only complete this on a laptop or desktop computer</p><p>Do NOT change tabs while the experiment is running. Doing so will invalidate your data. Times when you can take breaks and switch to a different browser tab/window will be specified.</p><p>Have as few tabs as possible open on your browser</p><p>Make sure your computer audio is on and speakers are at least at 50%</p><p>Do NOT use airpods or any other bluetooth headphones</p>', '<p>This experiment has 7 modules. Each module is 3 minutes and is followed by a short survey to measure your perceived workload.</p> <p> Click the next button to start</p>'],
+        pages: ['<b>Welcome! <p>This experiment has 7 modules. Each module is 3 minutes and is followed by a short survey to measure your perceived workload.</p> <p> Click the next button to start</p>'],
         show_clickable_nav: true
     };
 
@@ -85,18 +86,22 @@
         type: 'survey-multi-select',
         questions: [
             { prompt: "<b>Welcome! Before you start, please check of each of the following instructions to confirm you have read them</b>", options:[]},
-            { prompt: "", options: ["You must be in a quiet, distraction free environment"], required: true }, 
+            { prompt: "", options: ["You must be in a quiet, distraction free environment."], required: true }, 
             { prompt: "", options: ["You will need 45 minutes to complete the study. You cannot stop the study and resume it later."], required: true }, 
             { prompt: "", options: ["You need to be comfortably seated so your hands can access your mouse/trackpad and keyboard."], required: true }, 
-            { prompt: "", options: ["Only complete this on a laptop or desktop with working speakers or wired headphones."], required: true },
-            { prompt: "", options: ["This experiment uses sound.  Please check that your volume is at a comfortable but easily hear-able level.  For most computers, about halfway up is a good setting."], required: true },       
-            { prompt: "", options: ["Please do NOT use airpods or any other bluetooth headphones."], required: true }, 
-            { prompt: "", options: ["This experiment runs best on Chrome. Please use Chrome if you have it."], required: true },
-            { prompt: "", options: ["Please do NOT change tabs while the experiment is running. Doing so will invalidate your data. Times when you can take breaks and switch to a different browser tab/window will be specified."], required: true },
-            { prompt: "", options: ["Have as few tabs as possible open on your browser."], required: true }
+            { prompt: "", options: ["This experiment includes sound. Please put on the headphones."], required: true }
+
+            // instrucutions used for remote 
+            //{ prompt: "", options: ["Only complete this on a laptop or desktop with working speakers or wired headphones."], required: true },
+            //{ prompt: "", options: ["This experiment uses sound.  Please check that your volume is at a comfortable but easily hear-able level.  For most computers, about halfway up is a good setting."], required: true },       
+            //{ prompt: "", options: ["Please do NOT use airpods or any other bluetooth headphones."], required: true }, 
+            //{ prompt: "", options: ["This experiment runs best on Chrome. Please use Chrome if you have it."], required: true },
+            //{ prompt: "", options: ["Please do NOT change tabs while the experiment is running. Doing so will invalidate your data. Times when you can take breaks and switch to a different browser tab/window will be specified."], required: true },
+            //{ prompt: "", options: ["Have as few tabs as possible open on your browser."], required: true }
             
         ]
     }
+
 
     var instructions_confirms2 = {
         type: 'my-html-button-response',
@@ -699,36 +704,45 @@
 
     var demographics = {
         //timeline: [demo_q1, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_q10, demo_q11_q12]
-        timeline: [testing, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_speakers, demo_q10, demo_q11_q12]
+        //timeline: [testing, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_speakers, demo_q10, demo_q11_q12]
+        timeline: [testing, demo_q2, demo_q3, demo_q4_q5_q6, demo_q7_q8, demo_q9, demo_q10, demo_q11_q12]
     
     }
 
     var audio_instructions = {
-        timeline: [break_screen, audio_first_instruction, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
+       // timeline: [break_screen, audio_first_instruction, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
+        timeline: [audio_first_instruction, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
 
     }
     var speech_instructions = {
-        timeline: [break_screen, audio_first_instruction, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
+       // timeline: [break_screen, audio_first_instruction, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
+        timeline: [audio_first_instruction, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
     }
 
     var visual_instructions = {
-        timeline: [break_screen,visual_first_instruction, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
+        //timeline: [break_screen,visual_first_instruction, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
+
+        timeline: [visual_first_instruction, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
     }
 
     var tracking_instructions = {
-        timeline: [break_screen,tracking_first_instruction, tracking_touching, tracking_not_touching, hand_position_instructions, last_instruction]
+        //timeline: [break_screen,tracking_first_instruction, tracking_touching, tracking_not_touching, hand_position_instructions, last_instruction]
+        timeline: [tracking_first_instruction, tracking_touching, tracking_not_touching, hand_position_instructions, last_instruction]
     }
 
     var audio_tracking_instructions = {
-        timeline: [break_screen,dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
+        //timeline: [break_screen,dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
+        timeline: [dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, audio_alert_high, audio_alert_low, hand_position_instructions, last_instruction]
     }
 
     var speech_tracking_instructions = {
-        timeline: [break_screen,dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
+        //timeline: [break_screen,dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
+        timeline: [dual_speech_audio_tracking_instructions, tracking_touching, tracking_not_touching, speech_alert_high, speech_alert_low, hand_position_instructions, last_instruction]
     }
 
     var visual_tracking_instructions = {
-        timeline: [break_screen,dual_visual_tracking_instructions, tracking_touching, tracking_not_touching, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
+        //timeline: [break_screen,dual_visual_tracking_instructions, tracking_touching, tracking_not_touching, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
+        timeline: [dual_visual_tracking_instructions, tracking_touching, tracking_not_touching, visual_alert_up, visual_alert_down, hand_position_instructions, last_instruction]
     }
 
 
@@ -775,7 +789,6 @@
         timeline: [tracking_instructions, single_task_tracking, nasa_tlx]
     }
 
-
     // Shuffle single trials 
     var single_trials = {
         timeline: shuffle([single_audio_trial, single_speech_trial, single_visual_trial, single_tracking_trial])
@@ -800,6 +813,7 @@
         timeline: shuffle([dual_audio_trial, dual_speech_trial, dual_visual_trial])
     }
 
+
     var thanks_and_bye = {
         type: 'my-html-button-response', 
         stimulus: '<p>Thank you so much for your participation!</p><p>If you have any questions or concerns, please reach out to Professor Nees at neesm@lafayette.edu.</p>',
@@ -818,7 +832,7 @@
         fullscreen_mode: false
     }
 
-    let sona_id = jsPsych.data.urlVariables()['sona_id']; 
+    //let sona_id = jsPsych.data.urlVariables()['sona_id']; 
 
     jsPsych.init({
 
@@ -837,17 +851,19 @@
         // progress bar
         show_progress_bar: true,
         auto_update_progress_bar: false,
+        
+        
 
-
-        on_finish: function () {
+        //on_finish: function () {
             //jsPsych.data.displayData('csv'); // will this affect the data output on Cognition?
             //jsPsych.data.displayData();  
 
             // Redirect should go here 
-            window.location.assign("https://lafayettecollege.sona-systems.com/webstudy_credit.aspx?experiment_id=261&credit_token=7b62776bdde047c5b32170a5f6c4d0c8&survey_code=" +sona_id)
+            //window.location.assign("https://lafayettecollege.sona-systems.com/webstudy_credit.aspx?experiment_id=261&credit_token=7b62776bdde047c5b32170a5f6c4d0c8&survey_code=" +sona_id)
 
 
-        }
+        //}
+        //*/
     })
 
 
